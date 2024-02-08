@@ -26,7 +26,28 @@ model Post {
     @@index([name])
 }
 
-// Necessary for Next auth
+model VerifiedLink {
+    id            String    @id @default(cuid())
+    url           String
+    status        VerifiedLinkStatus
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+
+    createdBy     User   @relation(fields: [createdById], references: [id])
+    createdById   String
+
+}
+
+// ------------------------------- ENUMS ------------------------------- //
+
+enum VerifiedLinkStatus {
+    approved
+    pending
+    rejected
+}
+
+// ------------------------------- NEXT AUTH BOUNDARIES ------------------------------- //
+
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -62,6 +83,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    links         VerifiedLink[]
 }
 
 model VerificationToken {
