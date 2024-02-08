@@ -11,13 +11,6 @@ export interface Iguild {
   features: string[];
 }
 
-export interface IuploadPresignedUrlResponse {
-  url: string;
-  fields: {
-    [key: string]: string;
-  };
-}
-
 export interface IProject {
   discord_server: string;
   description: string;
