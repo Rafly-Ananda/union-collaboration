@@ -2,8 +2,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { Input, Select, Textarea } from "@chakra-ui/react";
 import {
+  Input,
+  Select,
+  Textarea,
   FormControl,
   FormLabel,
   NumberInput,

@@ -1,15 +1,26 @@
-import Link from "next/link";
+import type { MouseEvent } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import deleteMeLater from "../../../../public/assets/delete_me_later.png";
 
-export default function VerticalShowcaseCard() {
-  const onCollabsClick = () => {
-    console.log("Collabs");
+export default function VerticalShowcaseCard({
+  projectId,
+}: {
+  projectId: string;
+}) {
+  const router = useRouter();
+  const onCardClick = () => {
+    router.push(`/home/playground/project/${projectId}`);
+  };
+
+  const onCollabsClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/home/playground/project/${projectId}/collab`);
   };
 
   return (
     <div className="flex h-fit w-[240px] flex-col rounded-3xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:cursor-pointer">
-      <div className="relative  h-48  w-full ">
+      <div className="relative  h-48  w-full" onClick={onCardClick}>
         <Image
           src={deleteMeLater}
           alt="de logo"
@@ -48,14 +59,12 @@ export default function VerticalShowcaseCard() {
             66 Requesting
           </p>
           <div className="mt-2 flex items-center justify-center">
-            <Link href="/home/playground/project/1">
-              <button
-                className="rounded-md bg-black p-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:scale-105"
-                onClick={onCollabsClick}
-              >
-                Open Collabs
-              </button>
-            </Link>
+            <button
+              className="rounded-md bg-black p-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:scale-105"
+              onClick={onCollabsClick}
+            >
+              Open Collabs
+            </button>
           </div>
         </div>
       </div>

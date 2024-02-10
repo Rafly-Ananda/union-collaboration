@@ -24,6 +24,8 @@ export default async function RootLayout({
 }) {
   const session = await getServerAuthSession();
 
+  console.log(session);
+
   return (
     <html lang="en">
       <body className={`font-sans ${spaceGrotesk.variable}`}>

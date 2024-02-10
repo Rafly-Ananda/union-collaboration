@@ -52,7 +52,7 @@ export default function CreationViewer() {
         <div className="flex items-center gap-4">
           {/* Edit */}
           <Link
-            href={`/home/dashboard/your-creation/1`}
+            href={`/home/dashboard/your-creation/${projectIdentifier}/edit`}
             className="transition delay-150 duration-300 ease-in-out hover:scale-105"
           >
             <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A]">

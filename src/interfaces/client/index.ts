@@ -1,6 +1,7 @@
 import type { InewProjectInput, EmintInfo } from "./project";
 import type { InewDaoInput } from "./dao";
 import type { INewCollaborationRequest } from "./collaboration";
+import type { InewWhitelistInput, EWhitelistType } from "./whitelist";
 
 export interface Iguild {
   id: string;
@@ -30,4 +31,6 @@ export type {
   InewProjectInput,
   EmintInfo,
   INewCollaborationRequest,
+  InewWhitelistInput,
+  EWhitelistType,
 };

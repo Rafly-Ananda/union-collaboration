@@ -26,6 +26,8 @@ model Post {
     @@index([name])
 }
 
+// ------------------------------- TABLES ------------------------------- //
+
 model VerifiedLink {
     id            String    @id @default(cuid())
     url           String

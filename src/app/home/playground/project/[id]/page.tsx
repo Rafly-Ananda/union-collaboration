@@ -18,10 +18,6 @@ export default function ProjectViewer() {
   const pathName = usePathname();
   const projectIdentifier = pathName.split("/").at(-1);
 
-  const onCollabsClick = () => {
-    console.log("aa");
-  };
-
   return (
     <div>
       <div>
@@ -44,11 +40,8 @@ export default function ProjectViewer() {
 
         {/* Project Actions */}
         <div className="flex items-center gap-4">
-          <Link href="/home/playground/project/1/collab">
-            <button
-              className="rounded-md bg-black px-4 py-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1"
-              onClick={onCollabsClick}
-            >
+          <Link href={`/home/playground/project/${projectIdentifier}/collab`}>
+            <button className="rounded-md bg-black px-4 py-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1">
               Collabs
             </button>
           </Link>

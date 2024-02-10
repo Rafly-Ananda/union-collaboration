@@ -22,11 +22,31 @@ import { useState } from "react";
 
 import HowThisWorksModal from "@/app/_components/modals/HowThisWorks";
 
+interface p {
+  link: string;
+  status: string;
+}
+
+const deleteMeLater = Array.from({ length: 10 }, () => ({
+  link: `https://${Math.random().toString(36).substr(2, 8)}.com`,
+  status: "valid",
+}));
+
+const pageSize = 5;
+
+function paginate(array: p[], pageNumber: number, pageSize: number) {
+  const startIndex = (pageNumber - 1) * pageSize;
+  return array.slice(startIndex, startIndex + pageSize);
+}
+
 export default function LinkSubmit() {
   const pathName = usePathname();
   const pathIdentifier = pathName.split("/").at(-1);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newLink, setNewLink] = useState<string>("");
+  const [paginationPage, setPaginationPage] = useState<number>(1);
+
+  const itemForPage = paginate(deleteMeLater, paginationPage, pageSize);
 
   // const submitLink = api.link.submitLink.useMutation({
   //   onSuccess: () => {
@@ -39,6 +59,15 @@ export default function LinkSubmit() {
     // submitLink.mutate({
     //   url: newLink,
     // });
+  };
+
+  const onNextPage = () => {
+    setPaginationPage((p) => p + 1);
+  };
+
+  const onPrevPage = () => {
+    if (paginationPage === 1) return;
+    setPaginationPage((p) => p - 1);
   };
 
   return (
@@ -81,22 +110,24 @@ export default function LinkSubmit() {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>
-                  <a
-                    href="www.elephantunion.com"
-                    className="text-[#0A65FF] underline"
-                  >
-                    foo.com
-                  </a>
-                </Td>
-                <Td>
-                  <span className="rounded-md bg-[#38A169] px-2 py-1 text-sm font-medium uppercase text-white">
-                    valid
-                  </span>
-                </Td>
-              </Tr>
-              <Tr>
+              {itemForPage.map((e, i) => (
+                <Tr key={i}>
+                  <Td>
+                    <a
+                      href="www.elephantunion.com"
+                      className="text-[#0A65FF] underline"
+                    >
+                      foo.com
+                    </a>
+                  </Td>
+                  <Td>
+                    <span className="rounded-md bg-[#38A169] px-2 py-1 text-sm font-medium uppercase text-white">
+                      valid
+                    </span>
+                  </Td>
+                </Tr>
+              ))}
+              {/* <Tr>
                 <Td>
                   <a
                     href="www.elephantunion.com"
@@ -125,14 +156,14 @@ export default function LinkSubmit() {
                     pending
                   </span>
                 </Td>
-              </Tr>
+              </Tr> */}
             </Tbody>
           </Table>
         </TableContainer>
       </div>
 
       {/* Show All */}
-      {pathIdentifier !== "submit-link" && (
+      {pathIdentifier !== "submit-link" ? (
         <div className="mt-5 flex items-center justify-center">
           <Link
             href={`${pathName}/submit-link`}
@@ -140,6 +171,20 @@ export default function LinkSubmit() {
           >
             See All
           </Link>
+        </div>
+      ) : (
+        <div className="flex w-full items-center justify-center">
+          <div className="join mt-5">
+            <button className="join-item btn bg-[#F3F4F6]" onClick={onPrevPage}>
+              «
+            </button>
+            <button className="join-item btn bg-[#F3F4F6]">
+              Page {paginationPage}
+            </button>
+            <button className="join-item btn bg-[#F3F4F6]" onClick={onNextPage}>
+              »
+            </button>
+          </div>
         </div>
       )}
     </div>

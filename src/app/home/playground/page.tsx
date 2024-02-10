@@ -112,8 +112,8 @@ export default function Playground() {
 
       {/* Project Showcase */}
       <div className="mt-5 flex flex-wrap items-center justify-center gap-5">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <VerticalShowcaseCard key={i} />
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((e, i) => (
+          <VerticalShowcaseCard key={i} projectId={e.toString()} />
         ))}
       </div>
 
