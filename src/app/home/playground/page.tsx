@@ -11,20 +11,21 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { SearchIcon, ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
-
 import VerticalShowcaseCard from "@/app/_components/cards/HomeShowcaseCard";
+import { api } from "@/trpc/react";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
   display: "swap",
 });
-
 const projectFilter: string[] = ["Pre Mint", "Post Mint", "DAO"];
 const paginationLimit = 6;
 
 export default function Playground() {
   const [paginationPage, setPaginationPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const { data } = api.project.getAll.useQuery({ page: 1, pageSize: 10 });
 
   // const { data, fetchNextPage, isLoading, isFetchingNextPage } =
   //   api.project.getPaginate.useInfiniteQuery(
@@ -112,8 +113,8 @@ export default function Playground() {
 
       {/* Project Showcase */}
       <div className="mt-5 flex flex-wrap items-center justify-center gap-5">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((e, i) => (
-          <VerticalShowcaseCard key={i} projectId={e.toString()} />
+        {data?.projects.map((e, i) => (
+          <VerticalShowcaseCard key={i} project={e} />
         ))}
       </div>
 

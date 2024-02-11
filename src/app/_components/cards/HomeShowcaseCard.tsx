@@ -3,23 +3,26 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import deleteMeLater from "../../../../public/assets/delete_me_later.png";
 
+import { Project } from "@/server/validator";
+import { dateFormatter } from "@/app/_utils/dateFormatter";
+
 export default function VerticalShowcaseCard({
-  projectId,
+  project,
 }: {
-  projectId: string;
+  project: Project;
 }) {
   const router = useRouter();
   const onCardClick = () => {
-    router.push(`/home/playground/project/${projectId}`);
+    router.push(`/home/playground/project/${project.id}`);
   };
 
   const onCollabsClick = (e: MouseEvent) => {
     e.stopPropagation();
-    router.push(`/home/playground/project/${projectId}/collab`);
+    router.push(`/home/playground/project/${project.id}/collab`);
   };
 
   return (
-    <div className="flex h-fit w-[240px] flex-col rounded-3xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:cursor-pointer">
+    <div className="flex max-h-[443px] w-[240px] flex-col rounded-3xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:cursor-pointer">
       <div className="relative  h-48  w-full" onClick={onCardClick}>
         <Image
           src={deleteMeLater}
@@ -30,10 +33,9 @@ export default function VerticalShowcaseCard({
 
       <div className="z-10 flex h-full w-full flex-col items-center justify-start gap-4 rounded-b-3xl bg-white px-2 pb-4 pt-2">
         <div className="text-center">
-          <h1 className="font-medium">Zeel Den</h1>
+          <h1 className="font-medium">{project.project_name}</h1>
           <p className="w-full text-ellipsis text-xs text-gray-400">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-            accusantium doloremque laudantium
+            {project.description}
           </p>
         </div>
         <div className="h-full w-full p-2">
@@ -41,7 +43,7 @@ export default function VerticalShowcaseCard({
             {/* Supply */}
             <div className="flex w-full items-center justify-between">
               <p>Supply</p>
-              <span>20</span>
+              <span>{project.supply}</span>
             </div>
             {/* Mint Price */}
             <div className="flex w-full items-center justify-between">
@@ -51,7 +53,7 @@ export default function VerticalShowcaseCard({
             {/* Mint Date */}
             <div className="flex w-full items-center justify-between">
               <p>Mint Date</p>
-              <span>TBA</span>
+              <span>{dateFormatter(project.mint_date)}</span>
             </div>
           </div>
           <div className="mt-4 h-[1px] w-full bg-gray-400"></div>
