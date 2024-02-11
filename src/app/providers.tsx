@@ -1,6 +1,8 @@
 "use client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
+import { TRPCReactProvider } from "@/trpc/react";
+
 import type { Session } from "next-auth";
 
 export function Providers({
@@ -11,8 +13,10 @@ export function Providers({
   session: Session | null;
 }) {
   return (
-    <ChakraProvider>
-      <SessionProvider session={session}>{children}</SessionProvider>
-    </ChakraProvider>
+    <TRPCReactProvider>
+      <ChakraProvider>
+        <SessionProvider session={session}>{children}</SessionProvider>
+      </ChakraProvider>
+    </TRPCReactProvider>
   );
 }

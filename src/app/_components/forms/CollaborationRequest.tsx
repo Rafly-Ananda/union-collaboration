@@ -14,7 +14,7 @@ import {
   Radio,
 } from "@chakra-ui/react";
 
-import type { INewCollaborationRequest } from "@/interfaces/client";
+import type { INewCollaborationRequest } from "@/app/_interfaces";
 
 export default function CollaborationRequestForm() {
   const pathName = usePathname();

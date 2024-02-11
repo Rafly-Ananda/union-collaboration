@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon, ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import VerticalShowcaseCard from "@/app/_components/cards/HomeShowcaseCard";
+import VerticalShowcaseCardSkeleton from "@/app/_components/skeletons/HomeShowCaseCardSkeleton";
 import { api } from "@/trpc/react";
 
 const graphik = localFont({
@@ -19,13 +20,16 @@ const graphik = localFont({
   display: "swap",
 });
 const projectFilter: string[] = ["Pre Mint", "Post Mint", "DAO"];
-const paginationLimit = 6;
+const paginationLimit = 12;
 
 export default function Playground() {
   const [paginationPage, setPaginationPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const { data } = api.project.getAll.useQuery({ page: 1, pageSize: 10 });
+  const { data, isLoading, isError } = api.project.getAll.useQuery({
+    page: 1,
+    pageSize: paginationLimit,
+  });
 
   // const { data, fetchNextPage, isLoading, isFetchingNextPage } =
   //   api.project.getPaginate.useInfiniteQuery(
@@ -113,36 +117,48 @@ export default function Playground() {
 
       {/* Project Showcase */}
       <div className="mt-5 flex flex-wrap items-center justify-center gap-5">
-        {data?.projects.map((e, i) => (
-          <VerticalShowcaseCard key={i} project={e} />
-        ))}
+        {isLoading || isError
+          ? Array.from({ length: paginationLimit }).map((_, i) => (
+              <VerticalShowcaseCardSkeleton key={i} />
+            ))
+          : data?.projects.map((e, i) => (
+              <VerticalShowcaseCard key={i} project={e} />
+            ))}
       </div>
 
       {/* Project Showcase Pagination */}
       <div className="mt-10 flex w-full items-center justify-center gap-10">
-        <IconButton
-          aria-label="previous button"
-          bg="black"
-          h="full"
-          w="fit-content"
-          size="sm"
-          isRound={true}
-          padding="15px"
-          icon={<ArrowBackIcon color="white" boxSize={6} />}
-          onClick={handleFetchPreviousPage}
-        ></IconButton>
-
-        <IconButton
-          aria-label="next button"
-          bg="black"
-          h="full"
-          w="fit-content"
-          size="sm"
-          isRound={true}
-          padding="15px"
-          icon={<ArrowForwardIcon color="white" boxSize={6} />}
-          onClick={handleFetchNextPage}
-        ></IconButton>
+        {isLoading || isError ? (
+          <>
+            <div className="skeleton h-14 w-14 rounded-full"></div>
+            <div className="skeleton h-14 w-14 rounded-full"></div>{" "}
+          </>
+        ) : (
+          <>
+            <IconButton
+              aria-label="previous button"
+              bg="black"
+              h="full"
+              w="fit-content"
+              size="sm"
+              isRound={true}
+              padding="15px"
+              icon={<ArrowBackIcon color="white" boxSize={6} />}
+              onClick={handleFetchPreviousPage}
+            ></IconButton>
+            <IconButton
+              aria-label="next button"
+              bg="black"
+              h="full"
+              w="fit-content"
+              size="sm"
+              isRound={true}
+              padding="15px"
+              icon={<ArrowForwardIcon color="white" boxSize={6} />}
+              onClick={handleFetchNextPage}
+            ></IconButton>
+          </>
+        )}
       </div>
     </>
   );

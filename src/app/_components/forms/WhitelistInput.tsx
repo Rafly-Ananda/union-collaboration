@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 
-import type { InewWhitelistInput, EWhitelistType } from "@/interfaces/client";
+import type { InewWhitelistInput, EWhitelistType } from "@/app/_interfaces";
 
 export default function WhitelistInputForm({
   projectId,

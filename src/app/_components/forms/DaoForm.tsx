@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Input, Select, Textarea } from "@chakra-ui/react";
 import { FormControl, FormLabel, FormHelperText } from "@chakra-ui/react";
 import localFont from "next/font/local";
-import type { InewDaoInput } from "@/interfaces/client";
+import type { InewDaoInput } from "@/app/_interfaces";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",

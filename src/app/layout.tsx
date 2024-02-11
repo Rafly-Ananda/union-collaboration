@@ -1,7 +1,6 @@
 import "@/styles/globals.css";
 import { Providers } from "@/app/providers";
 import { Space_Grotesk } from "next/font/google";
-import { TRPCReactProvider } from "@/trpc/react";
 
 // NextAuth Client Session
 import { getServerAuthSession } from "@/server/auth";
@@ -27,9 +26,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${spaceGrotesk.variable}`}>
-        <TRPCReactProvider>
-          <Providers session={session}>{children}</Providers>
-        </TRPCReactProvider>
+        <Providers session={session}>{children}</Providers>
       </body>
     </html>
   );

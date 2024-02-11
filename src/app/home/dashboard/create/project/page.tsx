@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormHelperText,
 } from "@chakra-ui/react";
-import type { InewProjectInput, EmintInfo } from "@/interfaces/client";
+import type { InewProjectInput, EmintInfo } from "@/app/_interfaces";
 
 export default function CreateProject() {
   const router = useRouter();

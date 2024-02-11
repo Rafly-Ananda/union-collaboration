@@ -9,6 +9,9 @@ import DiscordProvider from "next-auth/providers/discord";
 import { env } from "@/env";
 import { db } from "@/server/db";
 
+import { getUserDetails, getUserGuildDetails } from "@/server/_utils/discord";
+import { onAuthCallback } from "@/server/_utils/authCallback";
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -40,13 +43,26 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.sub,
-      },
-    }),
+    session: ({ session, token, user }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.sub,
+        },
+      };
+    },
+
+    jwt: async ({ token, account }) => {
+      if (account) {
+        const discUsrDetails = await getUserDetails(account.access_token!);
+        const discUserGuilds = await getUserGuildDetails(account.access_token!);
+
+        await onAuthCallback(discUsrDetails, discUserGuilds);
+      }
+
+      return token;
+    },
   },
   adapter: PrismaAdapter(db),
   providers: [

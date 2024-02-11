@@ -14,7 +14,7 @@ import {
   FormHelperText,
 } from "@chakra-ui/react";
 import localFont from "next/font/local";
-import type { InewProjectInput, EmintInfo } from "@/interfaces/client";
+import type { InewProjectInput, EmintInfo } from "@/app/_interfaces";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
