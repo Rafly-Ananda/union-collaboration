@@ -3,20 +3,26 @@ import Image from "next/image";
 import Link from "next/link";
 import LinkSubmit from "@/app/_components/checker/LinkSubmit";
 import YourCreationCard from "@/app/_components/cards/YourCreationCard";
-
 import contactSupportLogo from "../../../../public/assets/contact_support_logo.png";
 import createProjectEmblem from "../../../../public/assets/create_project_emblem.png";
 import createDaoEmblem from "../../../../public/assets/create_dao_emblem.png";
+import { getServerAuthSession } from "@/server/auth";
+import { api } from "@/trpc/server";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
   display: "swap",
 });
 
-import { getServerAuthSession } from "@/server/auth";
-
 export default async function Dashboard() {
   const session = await getServerAuthSession();
+  const userExternal = session?.user.extras.id;
+
+  const data = await api.project.getAll.query({
+    page: 1,
+    pageSize: 3,
+    externalUserId: userExternal,
+  });
 
   return (
     <section className="w-full">
@@ -26,7 +32,7 @@ export default async function Dashboard() {
           <h1 className={`${graphik.className} text-5xl font-bold`}>
             Hi, {session?.user.name}
           </h1>
-          <p>
+          <p className="mt-2">
             Welcome to the Dashboard, this is where you create and control
             everything
           </p>
@@ -88,8 +94,8 @@ export default async function Dashboard() {
         <h6 className="flex-none text-base font-bold">Your Creation</h6>
 
         <div className="mt-5 w-full">
-          {[1, 2, 3].map((e, i) => (
-            <YourCreationCard key={i} projectId={e.toString()} />
+          {data?.projects.map((e, i) => (
+            <YourCreationCard key={i} project={e} />
           ))}
         </div>
 

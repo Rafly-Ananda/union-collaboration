@@ -14,13 +14,13 @@ import { SearchIcon, ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import VerticalShowcaseCard from "@/app/_components/cards/HomeShowcaseCard";
 import VerticalShowcaseCardSkeleton from "@/app/_components/skeletons/HomeShowCaseCardSkeleton";
 import { api } from "@/trpc/react";
+import { CLIENT_CONFIG } from "@/app/_config/config";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
   display: "swap",
 });
 const projectFilter: string[] = ["Pre Mint", "Post Mint", "DAO"];
-const paginationLimit = 12;
 
 export default function Playground() {
   const [paginationPage, setPaginationPage] = useState<number>(0);
@@ -28,7 +28,7 @@ export default function Playground() {
 
   const { data, isLoading, isError } = api.project.getAll.useQuery({
     page: 1,
-    pageSize: paginationLimit,
+    pageSize: CLIENT_CONFIG.PAGINATION_LIMIT,
   });
 
   // const { data, fetchNextPage, isLoading, isFetchingNextPage } =
@@ -118,9 +118,9 @@ export default function Playground() {
       {/* Project Showcase */}
       <div className="mt-5 flex flex-wrap items-center justify-center gap-5">
         {isLoading || isError
-          ? Array.from({ length: paginationLimit }).map((_, i) => (
-              <VerticalShowcaseCardSkeleton key={i} />
-            ))
+          ? Array.from({ length: CLIENT_CONFIG.PAGINATION_LIMIT }).map(
+              (_, i) => <VerticalShowcaseCardSkeleton key={i} />,
+            )
           : data?.projects.map((e, i) => (
               <VerticalShowcaseCard key={i} project={e} />
             ))}

@@ -7,9 +7,9 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Divider } from "@chakra-ui/react";
 import { FaXTwitter, FaDiscord, FaGlobe } from "react-icons/fa6";
-
+import { FaEdit, FaRegWindowClose, FaPlay } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 import deleteMeLater from "../../../../../../public/assets/delete_me_later.png";
-
 import { dateFormatter } from "@/app/_utils/dateFormatter";
 
 // Icons
@@ -18,10 +18,24 @@ import mintDateIcon from "../../../../../../public/assets/mint_date_icon.png";
 import wlSlotIcon from "../../../../../../public/assets/wl_slot_icon.png";
 
 export default function ProjectViewer() {
+  const { data: userSession } = useSession();
   const pathName = usePathname();
   const projectId = pathName.split("/").at(-1);
 
-  const { data } = api.project.get.useQuery({ projectId: projectId! });
+  const { data, refetch } = api.project.get.useQuery({ projectId: projectId! });
+
+  const updateProjectStatus = api.project.editProjectStatus.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  const onCollabsAction = async (projectId: string, status: string) => {
+    updateProjectStatus.mutate({
+      projectId,
+      status,
+    });
+  };
 
   return (
     <div>
@@ -45,11 +59,45 @@ export default function ProjectViewer() {
 
         {/* Project Actions */}
         <div className="flex items-center gap-4">
-          <Link href={`/home/playground/project/${projectId}/collab`}>
-            <button className="rounded-md bg-black px-4 py-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1">
-              Collabs
-            </button>
-          </Link>
+          {userSession?.user.extras.discord_id ===
+          data?.users?.at(0)?.discord_id ? (
+            <>
+              <Link
+                href={`/home/dashboard/your-creation/${projectId}/edit`}
+                className="transition delay-150 duration-300 ease-in-out hover:scale-105"
+              >
+                <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A]">
+                  <FaEdit color="#F2994A" />
+                  Edit
+                </button>
+              </Link>
+              {data?.status === "open" ? (
+                <button
+                  className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#E53E3E] p-2 text-sm font-semibold text-[#E53E3E] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#E53E3E] hover:text-white"
+                  onClick={() => onCollabsAction(projectId!, "closed")}
+                >
+                  <FaRegWindowClose />
+                  Close Collabs
+                </button>
+              ) : (
+                <button
+                  className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#319795] p-2 text-sm font-semibold text-[#319795] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#319795] hover:text-white"
+                  onClick={() => onCollabsAction(projectId!, "open")}
+                >
+                  <FaPlay />
+                  Open Collabs
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              <Link href={`/home/playground/project/${projectId}/collab`}>
+                <button className="rounded-md bg-black px-4 py-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1">
+                  Collabs
+                </button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -61,17 +109,17 @@ export default function ProjectViewer() {
             <Divider />
             <ul className="mt-2 flex items-center justify-center gap-4">
               <li>
-                <a href={data?.twitter}>
+                <a href={`https://${data?.twitter}`}>
                   <FaXTwitter color="#C2C2C2" />
                 </a>
               </li>
               <li>
-                <a href={data?.discord}>
+                <a href={`https://${data?.discord}`}>
                   <FaDiscord color="#C2C2C2" />
                 </a>
               </li>
               <li>
-                <a href={data?.website}>
+                <a href={`https://${data?.website}`}>
                   <FaGlobe color="#C2C2C2" />
                 </a>
               </li>

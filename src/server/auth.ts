@@ -11,6 +11,7 @@ import { db } from "@/server/db";
 
 import { getUserDetails, getUserGuildDetails } from "@/server/_utils/discord";
 import { onAuthCallback } from "@/server/_utils/authCallback";
+import type { UserExternal } from "./validator";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -22,6 +23,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      extras: UserExternal;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -43,12 +45,13 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    session: ({ session, token, user }) => {
+    session: ({ session, token }) => {
       return {
         ...session,
         user: {
           ...session.user,
           id: token.sub,
+          extras: { ...(token?.extras as UserExternal) },
         },
       };
     },
@@ -58,7 +61,8 @@ export const authOptions: NextAuthOptions = {
         const discUsrDetails = await getUserDetails(account.access_token!);
         const discUserGuilds = await getUserGuildDetails(account.access_token!);
 
-        await onAuthCallback(discUsrDetails, discUserGuilds);
+        const r = await onAuthCallback(discUsrDetails, discUserGuilds);
+        token = { ...token, extras: r };
       }
 
       return token;
@@ -69,6 +73,7 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
+      authorization: { params: { scope: "guilds" } },
     }),
     /**
      * ...add more providers here.

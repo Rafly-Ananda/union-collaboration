@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { ProjectValidator } from "@/server/validator/project";
-import { projctResponseValidator } from "@/server/validator/index";
+import { projectResponseValidator } from "@/server/validator/index";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { SERVER_CONFIG } from "@/server/_config/config";
 
@@ -19,7 +19,7 @@ export const projectRouter = createTRPCRouter({
       try {
         const r = await (
           await fetch(
-            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project/?id=${projectId}`,
+            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project?id=${projectId}`,
           )
         ).json();
         if (r.message !== "OK") {
@@ -29,7 +29,9 @@ export const projectRouter = createTRPCRouter({
           });
         }
 
-        const vRes = projctResponseValidator.safeParse(r.data.projects.at(0));
+        const vRes = projectResponseValidator.safeParse(
+          r.data.projects.results,
+        );
         if (!vRes.success) {
           throw new TRPCError({
             message: "Failed z validating project",
@@ -39,12 +41,12 @@ export const projectRouter = createTRPCRouter({
         }
 
         return {
-          ...vRes.data,
+          ...vRes.data.at(0),
         };
       } catch (e) {
         if (e instanceof Error) {
           throw new TRPCError({
-            message: "Failed fetching all projects",
+            message: "Failed fetching projects",
             code: "INTERNAL_SERVER_ERROR",
             cause: e.message,
           });
@@ -57,19 +59,20 @@ export const projectRouter = createTRPCRouter({
       z.object({
         page: z.number(),
         pageSize: z.number(),
+        externalUserId: z.string().optional(),
       }),
     )
     .query(async ({ input }) => {
-      const { page, pageSize } = input;
+      const { page, pageSize, externalUserId } = input;
 
-      console.log(`${SERVER_CONFIG.EXTERNAL_API_URL}/union/project?page=${page}&page_size=${pageSize}`)
+      let fetchUrl = `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project?page=${page}&page_size=${pageSize}`;
+
+      fetchUrl = externalUserId
+        ? `${fetchUrl}&created_by=${externalUserId}`
+        : fetchUrl;
 
       try {
-        const r = await (
-          await fetch(
-            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project?page=${page}&page_size=${pageSize}`,
-          )
-        ).json();
+        const r = await (await fetch(`${fetchUrl}`)).json();
         if (r.message !== "OK") {
           throw new TRPCError({
             message: "Failed fetching all projects",
@@ -77,7 +80,9 @@ export const projectRouter = createTRPCRouter({
           });
         }
 
-        const vRes = projctResponseValidator.safeParse(r.data.projects.at(0));
+        const vRes = projectResponseValidator.safeParse(
+          r.data.projects.results,
+        );
         if (!vRes.success) {
           throw new TRPCError({
             message: "Failed z validating all projects",
@@ -87,10 +92,11 @@ export const projectRouter = createTRPCRouter({
         }
 
         return {
-          projects: [...r.data.projects],
+          projects: [...vRes.data],
         };
       } catch (e) {
         if (e instanceof Error) {
+          console.log(e);
           throw new TRPCError({
             message: "Failed fetching all projects",
             code: "INTERNAL_SERVER_ERROR",
@@ -122,8 +128,6 @@ export const projectRouter = createTRPCRouter({
         Expires: 600,
       });
 
-      console.log("aa");
-
       // simulate a slow db call
       // await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -135,14 +139,38 @@ export const projectRouter = createTRPCRouter({
       // });
     }),
 
-  getLatest: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.post.findFirst({
-      orderBy: { createdAt: "desc" },
-      where: { createdBy: { id: ctx.session.user.id } },
-    });
-  }),
+  editProjectStatus: protectedProcedure
+    .input(z.object({ projectId: z.string(), status: z.string() }))
+    .mutation(async ({ input }) => {
+      const { projectId, status } = input;
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
+      console.log(
+        `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project/${projectId}/status`,
+      );
+
+      console.log(`updated status will be ${status}`);
+
+      try {
+        const r = await (
+          await fetch(
+            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project/${projectId}/status`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ status }),
+            },
+          )
+        ).json();
+
+        return r;
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new Error(`Error on update project status, ${e.message}`);
+        }
+        // Typescript Sheananigans
+        throw new Error(`Unrecoverable error updating project status`);
+      }
+    }),
 });

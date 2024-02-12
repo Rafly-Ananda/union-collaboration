@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+export const UserExternalValidator = z.object({
+  id: z.string(),
+  discord_id: z.string(),
+  username: z.string(),
+  discriminator: z.string(),
+  avatar: z.string(),
+  is_project: z.boolean(),
+  is_dao: z.boolean(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
 export const UserValidator = z.object({
   id: z.string(),
   discord_id: z.string(),
@@ -35,10 +47,10 @@ export const TrimmedUserDiscordValidator = z.object({
 });
 
 export const DiscordGuildValidator = z.object({
-    id: z.string(),
-    name: z.string(),
-    icon: z.string(),
-    owner: z.boolean(),
-    permissions: z.string(),
-    features: z.array(z.string()),
+  id: z.string(),
+  name: z.string(),
+  icon: z.string(),
+  owner: z.boolean(),
+  permissions: z.string(),
+  features: z.array(z.string()),
 });

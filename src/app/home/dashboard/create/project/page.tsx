@@ -98,7 +98,7 @@ export default function CreateProject() {
               <option>Server C</option>
             </Select>
             <a
-              href="https://discord.com/oauth2/authorize?client_id=982629085287170099&permissions=268435456&scope=bot%20applications.commands"
+              href="https://discord.com/oauth2/authorize?client_id=1206641473119068170&scope=bot&permissions=268435456"
               className="w-[20%]"
             >
               <button className="h-full w-full rounded-md border border-[#cbd5e0] font-bold hover:bg-[#b9c2cc]">
