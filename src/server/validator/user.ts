@@ -54,3 +54,17 @@ export const DiscordGuildValidator = z.object({
   permissions: z.string(),
   features: z.array(z.string()),
 });
+
+export const UserGuildValidator = z.object({
+  id: z.string(),
+  discord_id: z.string(),
+  username: z.string(),
+  discriminator: z.string(),
+  avatar: z.string(),
+  is_project: z.boolean(),
+  is_dao: z.boolean(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  guild_id: z.string(),
+  guild_name: z.string(),
+});

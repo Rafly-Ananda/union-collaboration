@@ -59,15 +59,14 @@ export default function ProjectViewer() {
 
         {/* Project Actions */}
         <div className="flex items-center gap-4">
-          {userSession?.user.extras.discord_id ===
-          data?.users?.at(0)?.discord_id ? (
+          {userSession?.user.extras.id === data?.created_by ? (
             <>
               <Link
                 href={`/home/dashboard/your-creation/${projectId}/edit`}
-                className="transition delay-150 duration-300 ease-in-out hover:scale-105"
+                className=""
               >
-                <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A]">
-                  <FaEdit color="#F2994A" />
+                <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#F2994A] hover:text-white ">
+                  <FaEdit />
                   Edit
                 </button>
               </Link>

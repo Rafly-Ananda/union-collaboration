@@ -68,8 +68,8 @@ export default function ProjectForm() {
               ))} */}
             </Select>
             <FormHelperText>
-              Your project name will be the same as your discord project name.
-              Once it has been saved, you cannot change the server again.
+              You cannot change the server again. Please get in touch with the
+              admin if this was a mistake.
             </FormHelperText>
           </FormControl>
 
@@ -112,7 +112,7 @@ export default function ProjectForm() {
                 <option>Server C</option>
               </Select>
               <a
-                href="https://discord.com/oauth2/authorize?client_id=1206641473119068170&scope=bot&permissions=268435456"
+                href="https://discord.com/oauth2/authorize?client_id=1206650650193174540&scope=bot&permissions=268435456"
                 className="w-[20%]"
               >
                 <button className="h-full w-full rounded-md border border-[#cbd5e0] font-bold hover:bg-[#b9c2cc]">

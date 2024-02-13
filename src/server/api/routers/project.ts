@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { ProjectValidator } from "@/server/validator/project";
+import {
+  DaoInputValidator,
+  ProjectValidator,
+  CollabInputValidator,
+} from "@/server/validator/project";
 import { projectResponseValidator } from "@/server/validator/index";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { SERVER_CONFIG } from "@/server/_config/config";
@@ -96,7 +100,6 @@ export const projectRouter = createTRPCRouter({
         };
       } catch (e) {
         if (e instanceof Error) {
-          console.log(e);
           throw new TRPCError({
             message: "Failed fetching all projects",
             code: "INTERNAL_SERVER_ERROR",
@@ -144,12 +147,6 @@ export const projectRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const { projectId, status } = input;
 
-      console.log(
-        `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project/${projectId}/status`,
-      );
-
-      console.log(`updated status will be ${status}`);
-
       try {
         const r = await (
           await fetch(
@@ -171,6 +168,66 @@ export const projectRouter = createTRPCRouter({
         }
         // Typescript Sheananigans
         throw new Error(`Unrecoverable error updating project status`);
+      }
+    }),
+
+  editProject: protectedProcedure
+    .input(z.object({ project: DaoInputValidator }))
+    .mutation(async ({ input }) => {
+      const { project } = input;
+
+      try {
+        const r = await (
+          await fetch(
+            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project/${project.id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ ...project }),
+            },
+          )
+        ).json();
+
+        return r;
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new Error(`Error on update project , ${e.message}`);
+        }
+        // Typescript Sheananigans
+        throw new Error(`Unrecoverable error updating project`);
+      }
+    }),
+
+  createCollab: protectedProcedure
+    .input(z.object({ collabReq: CollabInputValidator }))
+    .mutation(async ({ input }) => {
+      const { collabReq } = input;
+
+      try {
+        const r = await (
+          await fetch(
+            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ ...collabReq }),
+            },
+          )
+        ).json();
+
+        console.log(r)
+
+        return r;
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new Error(`Error on creating collab , ${e.message}`);
+        }
+        // Typescript Sheananigans
+        throw new Error(`Unrecoverable error creating collab`);
       }
     }),
 });

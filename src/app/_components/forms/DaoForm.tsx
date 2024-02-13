@@ -4,42 +4,71 @@ import { useState } from "react";
 import { Input, Select, Textarea } from "@chakra-ui/react";
 import { FormControl, FormLabel, FormHelperText } from "@chakra-ui/react";
 import localFont from "next/font/local";
-import type { InewDaoInput } from "@/app/_interfaces";
+import type { IProject, InewDaoInput, IUserGuilds } from "@/app/_interfaces";
+import { api } from "@/trpc/react";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
   display: "swap",
 });
 
-export default function DaoForm() {
+export default function DaoForm({
+  dao,
+  userGuilds,
+}: {
+  dao: IProject | undefined;
+  userGuilds: IUserGuilds[] | undefined;
+}) {
   const router = useRouter();
-  const [newDao, setNewDao] = useState<InewDaoInput | undefined>();
+  const [newDao, setNewDao] = useState<InewDaoInput>({
+    project_name: dao ? dao.project_name! : "default",
+    description: dao ? dao.description! : "",
+    whitelist_role: dao ? dao.whitelist_role! : "default",
+    discord: dao ? dao.discord! : "",
+    twitter: dao ? dao.twitter! : "",
+    website: dao ? dao.website! : "",
+  });
 
   const onBackClick = () => {
-    router.push("/home/dashboard");
+    router.back();
   };
 
-  const onNewDaoSubmit = async () => {
-    console.log(newDao);
+  const updateProjectStatus = api.project.editProject.useMutation({
+    onSuccess: () => {
+      router.back();
+    },
+  });
+
+  const onCollabsAction = async () => {
+    updateProjectStatus.mutate({
+      project: {
+        ...newDao,
+        id: dao?.id!,
+        type: dao?.type!,
+        logo_url: "adasds",
+        mint_info: dao?.mint_info!,
+      },
+    });
   };
 
   return (
     <div>
-      <div className="flex flex-col items-start justify-center gap-2">
+      <div className="mt-5 flex flex-col items-start justify-center gap-2">
         <h1 className={`${graphik.className} text-5xl font-bold`}>
-          Edit/Create Dao
+          {dao ? "Edit" : "Create"} Dao
         </h1>
         <p>Please fill the form.</p>
       </div>
 
-      <div className="flex w-full gap-10">
+      <div className="mt-5 flex w-full gap-10">
         <div className="w-[65%] rounded-xl bg-[#FBFBFB] px-5 py-10">
           {/* Dao Server */}
           <FormControl isRequired={true}>
             <FormLabel>Dao Server</FormLabel>
             <Select
-              name="discord_server"
-              value={newDao?.discord_server ?? "default"}
+              isDisabled={dao ? true : false}
+              name="project_name"
+              value={newDao.project_name}
               onChange={(e) =>
                 setNewDao((prev) => ({
                   ...prev!,
@@ -50,15 +79,15 @@ export default function DaoForm() {
               <option hidden disabled value="default">
                 Select Discord Server...
               </option>
-              {/* {userGuilds?.map((e: Iguild) => (
-              <option key={e.name} value={e.id}>
-                {e.name}
-              </option>
-            ))} */}
+              {userGuilds?.map((e, i) => (
+                <option value={e.guild_name} key={e.guild_name + i}>
+                  {e.guild_name}
+                </option>
+              ))}
             </Select>
             <FormHelperText>
-              Your project name will be the same as your discord project name.
-              Once it has been saved, you cannot change the server again.
+              You cannot change the server again. Please get in touch with the
+              admin if this was a mistake.
             </FormHelperText>
           </FormControl>
 
@@ -68,7 +97,7 @@ export default function DaoForm() {
             <Textarea
               placeholder="Your project descriptions..."
               name="description"
-              value={newDao?.description ?? ""}
+              value={newDao.description}
               onChange={(e) =>
                 setNewDao((prev) => ({
                   ...prev!,
@@ -85,7 +114,7 @@ export default function DaoForm() {
               <Select
                 className="w-[80%]"
                 name="whitelist_role"
-                value={newDao?.whitelist_role ?? "default"}
+                value={newDao.whitelist_role}
                 onChange={(e) =>
                   setNewDao((prev) => ({
                     ...prev!,
@@ -115,8 +144,8 @@ export default function DaoForm() {
             <FormLabel>Discord</FormLabel>
             <Input
               placeholder="Discord Link..."
-              name="discord_link"
-              value={newDao?.discord_link ?? ""}
+              name="discord"
+              value={newDao.discord}
               onChange={(e) =>
                 setNewDao((prev) => ({
                   ...prev!,
@@ -131,8 +160,8 @@ export default function DaoForm() {
             <FormLabel>X / Twitter</FormLabel>
             <Input
               placeholder="X / Twitter Link..."
-              name="x_link"
-              value={newDao?.x_link ?? ""}
+              name="twitter"
+              value={newDao.twitter}
               onChange={(e) =>
                 setNewDao((prev) => ({
                   ...prev!,
@@ -147,8 +176,8 @@ export default function DaoForm() {
             <FormLabel>Website</FormLabel>
             <Input
               placeholder="Website Link..."
-              name="web_link"
-              value={newDao?.web_link ?? ""}
+              name="website"
+              value={newDao.website}
               onChange={(e) =>
                 setNewDao((prev) => ({
                   ...prev!,
@@ -162,7 +191,6 @@ export default function DaoForm() {
           <FormControl className="mt-5" isRequired={true}>
             <FormLabel>Project Logo (Max 200kb)</FormLabel>
             <Input
-              placeholder="Website Link..."
               type="file"
               name="project_logo"
               onChange={(e) =>
@@ -181,9 +209,9 @@ export default function DaoForm() {
             <p className="font-bold text-[#856100]">Attention</p>
             <div className="h-[2px] w-full"></div>
             <p className="text-sm text-[#856100]">
-              After submitting the project,
-              <strong> please contact our admin</strong> to process your project
-              to be displayed in main page.
+              After submitting the dao,
+              <strong> please contact our admin</strong> to process your dao to
+              be displayed in main page.
             </p>
           </div>
 
@@ -196,7 +224,7 @@ export default function DaoForm() {
             </button>
             <button
               className="w-full rounded-md border border-[#cbd5e0] bg-black p-3 font-bold text-white hover:bg-[#b9c2cc]"
-              onClick={onNewDaoSubmit}
+              onClick={onCollabsAction}
             >
               Submit
             </button>

@@ -1,9 +1,11 @@
 export interface InewDaoInput {
-  discord_server: string;
+  project_name: string;
   description: string;
+  type?: string;
+  discord: string;
+  twitter: string;
+  website: string;
+  logo_url?: string;
   whitelist_role: string;
-  discord_link: string;
-  x_link: string;
-  web_link: string;
-  project_logo: HTMLInputElement;
+  project_logo?: HTMLInputElement;
 }

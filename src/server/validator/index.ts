@@ -4,6 +4,7 @@ import {
   UserExternalValidator,
   UserValidator,
   UserDiscordValidator,
+  UserGuildValidator,
   TrimmedUserDiscordValidator,
   DiscordGuildValidator,
 } from "./user";
@@ -15,9 +16,11 @@ export type User = z.infer<typeof UserValidator>;
 export type UserDiscord = z.infer<typeof UserDiscordValidator>;
 export type TrimmedUserDiscord = z.infer<typeof TrimmedUserDiscordValidator>;
 export type UserDiscordGuild = z.infer<typeof DiscordGuildValidator>;
+export type UserOwnDiscordGuild = z.infer<typeof UserGuildValidator>;
 
 /** VALIDATORS **/
 export const projectResponseValidator = z.array(ProjectValidator);
 export const userDiscordResponseValidator = UserDiscordValidator;
 export const DiscordGuildResponseValidator = DiscordGuildValidator;
 export const UserExternalResponseValidator = UserExternalValidator;
+export const UserGuildResponseValidator = z.array(UserGuildValidator);

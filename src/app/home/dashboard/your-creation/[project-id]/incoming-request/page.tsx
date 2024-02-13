@@ -20,11 +20,14 @@ import { ChevronRightIcon, SearchIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { api } from "@/trpc/react";
 
 export default function IncomingRequest() {
   const pathName = usePathname();
-  const projectIdentifier = pathName.split("/").at(-2);
+  const projectId = pathName.split("/").at(-2);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const { data, refetch } = api.project.get.useQuery({ projectId: projectId! });
 
   const onSubmitSearchQuery = async () => {
     console.log(searchQuery);
@@ -41,6 +44,12 @@ export default function IncomingRequest() {
           <BreadcrumbItem>
             <BreadcrumbLink href="/home/dashboard/your-creation">
               Your Creation
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+
+          <BreadcrumbItem>
+            <BreadcrumbLink href={`/home/dashboard/your-creation/${data?.id}`}>
+              {data?.project_name}
             </BreadcrumbLink>
           </BreadcrumbItem>
 

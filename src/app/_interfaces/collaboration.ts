@@ -1,8 +1,9 @@
 export interface INewCollaborationRequest {
-  collaboration: string;
-  represented_as: string;
-  wl_spot: string;
-  team_spot: string;
+  project_id?: string;
+  requested_by: string;
+  collaboration_type: number | string;
+  wl_spot_amt: number;
+  wl_team_amt: number;
   method: string;
   note: string;
 }
