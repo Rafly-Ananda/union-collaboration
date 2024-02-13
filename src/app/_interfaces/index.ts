@@ -1,8 +1,9 @@
-import type { InewProjectInput, EmintInfo } from "./project";
+import type { InewProjectInput } from "./project";
 import type { InewDaoInput } from "./dao";
 import type { INewCollaborationRequest } from "./collaboration";
 import type { InewWhitelistInput, EWhitelistType } from "./whitelist";
 import type { IUser, IUserGuilds } from "./user";
+import { EmintInfo } from "./project";
 
 export interface Iguild {
   id: string;
@@ -26,7 +27,7 @@ export interface IProject {
   created_by?: string;
   status?: string;
   website?: string;
-  mint_info?: string;
+  mint_info?: EmintInfo;
   avl_wl_spots?: number;
   guild_id?: string;
   created_at?: string;
@@ -38,9 +39,10 @@ export interface IProject {
 export type {
   InewDaoInput,
   InewProjectInput,
-  EmintInfo,
   INewCollaborationRequest,
   InewWhitelistInput,
   EWhitelistType,
   IUserGuilds,
 };
+
+export { EmintInfo };

@@ -1,76 +1,70 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Input, Select, Textarea } from "@chakra-ui/react";
-import { FormControl, FormLabel, FormHelperText } from "@chakra-ui/react";
+import React from "react";
+import {
+  Input,
+  NumberInput,
+  NumberInputField,
+  Select,
+  Textarea,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+} from "@chakra-ui/react";
 import localFont from "next/font/local";
-import type { IProject, InewDaoInput, IUserGuilds } from "@/app/_interfaces";
-import { api } from "@/trpc/react";
+import {
+  IProject,
+  InewProjectInput,
+  IUserGuilds,
+  EmintInfo,
+} from "@/app/_interfaces";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
   display: "swap",
 });
 
-export default function DaoForm({
-  dao,
+export default function ProjectForm({
+  project,
   userGuilds,
+  onProjectSubmitAction,
+  localProjectState,
+  localProjectSetState,
 }: {
-  dao: IProject | undefined;
+  project?: IProject | undefined;
   userGuilds: IUserGuilds[] | undefined;
+  onProjectSubmitAction: () => void;
+  localProjectState: InewProjectInput;
+  localProjectSetState: React.Dispatch<React.SetStateAction<InewProjectInput>>;
 }) {
   const router = useRouter();
-  const [newDao, setNewDao] = useState<InewDaoInput>({
-    project_name: dao ? dao.project_name! : "default",
-    description: dao ? dao.description! : "",
-    whitelist_role: dao ? dao.whitelist_role! : "default",
-    discord: dao ? dao.discord! : "",
-    twitter: dao ? dao.twitter! : "",
-    website: dao ? dao.website! : "",
-  });
 
   const onBackClick = () => {
     router.back();
   };
 
-  const updateProjectStatus = api.project.editProject.useMutation({
-    onSuccess: () => {
-      router.back();
-    },
-  });
-
-  const onCollabsAction = async () => {
-    updateProjectStatus.mutate({
-      project: {
-        ...newDao,
-        id: dao?.id!,
-        type: dao?.type!,
-        logo_url: "adasds",
-        mint_info: dao?.mint_info!,
-      },
-    });
-  };
-
   return (
-    <div>
-      <div className="mt-5 flex flex-col items-start justify-center gap-2">
+    <div className="mt-5">
+      <div className="flex flex-col items-start justify-center gap-2">
         <h1 className={`${graphik.className} text-5xl font-bold`}>
-          {dao ? "Edit" : "Create"} Dao
+          {project ? "Edit" : "Create"} Project
         </h1>
         <p>Please fill the form.</p>
       </div>
 
       <div className="mt-5 flex w-full gap-10">
         <div className="w-[65%] rounded-xl bg-[#FBFBFB] px-5 py-10">
-          {/* Dao Server */}
+          {/* Project Server */}
           <FormControl isRequired={true}>
-            <FormLabel>Dao Server</FormLabel>
+            <FormLabel>Project Server</FormLabel>
             <Select
-              isDisabled={dao ? true : false}
+              isDisabled={project ? true : false}
               name="project_name"
-              value={newDao.project_name}
+              value={localProjectState.project_name}
               onChange={(e) =>
-                setNewDao((prev) => ({
+                localProjectSetState((prev) => ({
                   ...prev!,
                   [e.target.name]: e.target.value,
                 }))
@@ -86,8 +80,10 @@ export default function DaoForm({
               ))}
             </Select>
             <FormHelperText>
-              You cannot change the server again. Please get in touch with the
-              admin if this was a mistake.
+              {project
+                ? `You cannot change the server again. Please get in touch with the
+              admin if this was a mistake.`
+                : `Your project name will be the same as your discord project name. Once it has been saved, you cannot change the server again.`}
             </FormHelperText>
           </FormControl>
 
@@ -95,11 +91,11 @@ export default function DaoForm({
           <FormControl isRequired={true} className="mt-5">
             <FormLabel>Description</FormLabel>
             <Textarea
-              placeholder="Your project descriptions..."
               name="description"
-              value={newDao.description}
+              placeholder="Your project descriptions..."
+              value={localProjectState?.description}
               onChange={(e) =>
-                setNewDao((prev) => ({
+                localProjectSetState((prev) => ({
                   ...prev!,
                   [e.target.name]: e.target.value,
                 }))
@@ -112,11 +108,11 @@ export default function DaoForm({
             <FormLabel>Whitelist Role</FormLabel>
             <div className=" flex gap-4">
               <Select
-                className="w-[80%]"
                 name="whitelist_role"
-                value={newDao.whitelist_role}
+                className="w-[80%]"
+                value={localProjectState?.whitelist_role}
                 onChange={(e) =>
-                  setNewDao((prev) => ({
+                  localProjectSetState((prev) => ({
                     ...prev!,
                     [e.target.name]: e.target.value,
                   }))
@@ -129,14 +125,88 @@ export default function DaoForm({
                 <option>Server B</option>
                 <option>Server C</option>
               </Select>
-              <button className="w-[20%] rounded-md border border-[#cbd5e0] font-bold hover:bg-[#b9c2cc]">
-                Invite Bot
-              </button>
+              <a
+                href="https://discord.com/oauth2/authorize?client_id=1206650650193174540&scope=bot&permissions=268435456"
+                className="w-[20%]"
+              >
+                <button className="h-full w-full rounded-md border border-[#cbd5e0] font-bold hover:bg-[#b9c2cc]">
+                  Invite Bot
+                </button>
+              </a>
             </div>
             <FormHelperText>
               You need to have Union Bot in you Discord server to be able to
               select the whitelist role
             </FormHelperText>
+          </FormControl>
+
+          {/* Mint Info */}
+          <FormControl isRequired={true} className="mt-5">
+            <FormLabel>Mint Info</FormLabel>
+            <RadioGroup
+              name="mint_info"
+              value={localProjectState?.mint_info}
+              onChange={(e) =>
+                localProjectSetState((prev) => ({
+                  ...prev!,
+                  mint_info: e as EmintInfo,
+                }))
+              }
+            >
+              <div className="flex items-center justify-start gap-20">
+                <Radio value={EmintInfo.PRE}>Pre-Mint</Radio>
+                <Radio value={EmintInfo.POST}>Post-Mint</Radio>
+              </div>
+            </RadioGroup>
+          </FormControl>
+
+          {/* Mint Date */}
+          <FormControl className="mt-5">
+            <FormLabel>Mint Date</FormLabel>
+            <Input
+              size="md"
+              type="date"
+              name="mint_date"
+              value={localProjectState?.mint_date}
+              onChange={(e) =>
+                localProjectSetState((prev) => ({
+                  ...prev!,
+                  [e.target.name]: e.target.value,
+                }))
+              }
+            />
+          </FormControl>
+
+          {/* Supply */}
+          <FormControl className="mt-5">
+            <FormLabel>Supply</FormLabel>
+            <NumberInput value={localProjectState?.supply}>
+              <NumberInputField
+                name="supply"
+                onChange={(e) =>
+                  localProjectSetState((prev) => ({
+                    ...prev!,
+                    [e.target.name]: +e.target.value,
+                  }))
+                }
+              />
+            </NumberInput>
+          </FormControl>
+
+          {/* Available WL Spots */}
+          <FormControl className="mt-5">
+            <FormLabel>Available WL Spots</FormLabel>
+            <NumberInput value={localProjectState?.avl_wl_spots}>
+              <NumberInputField
+                name="avl_wl_spots"
+                onChange={(e) =>
+                  localProjectSetState((prev) => ({
+                    ...prev!,
+                    [e.target.name]: +e.target.value,
+                  }))
+                }
+              />
+            </NumberInput>
           </FormControl>
 
           {/* Discord */}
@@ -145,9 +215,9 @@ export default function DaoForm({
             <Input
               placeholder="Discord Link..."
               name="discord"
-              value={newDao.discord}
+              value={localProjectState.discord}
               onChange={(e) =>
-                setNewDao((prev) => ({
+                localProjectSetState((prev) => ({
                   ...prev!,
                   [e.target.name]: e.target.value,
                 }))
@@ -161,9 +231,9 @@ export default function DaoForm({
             <Input
               placeholder="X / Twitter Link..."
               name="twitter"
-              value={newDao.twitter}
+              value={localProjectState.twitter}
               onChange={(e) =>
-                setNewDao((prev) => ({
+                localProjectSetState((prev) => ({
                   ...prev!,
                   [e.target.name]: e.target.value,
                 }))
@@ -177,9 +247,9 @@ export default function DaoForm({
             <Input
               placeholder="Website Link..."
               name="website"
-              value={newDao.website}
+              value={localProjectState.website}
               onChange={(e) =>
-                setNewDao((prev) => ({
+                localProjectSetState((prev) => ({
                   ...prev!,
                   [e.target.name]: e.target.value,
                 }))
@@ -191,10 +261,11 @@ export default function DaoForm({
           <FormControl className="mt-5" isRequired={true}>
             <FormLabel>Project Logo (Max 200kb)</FormLabel>
             <Input
+              placeholder="Website Link..."
               type="file"
               name="project_logo"
               onChange={(e) =>
-                setNewDao((prev) => ({
+                localProjectSetState((prev) => ({
                   ...prev!,
                   [e.target.name]: e.target.files?.[0],
                 }))
@@ -209,9 +280,9 @@ export default function DaoForm({
             <p className="font-bold text-[#856100]">Attention</p>
             <div className="h-[2px] w-full"></div>
             <p className="text-sm text-[#856100]">
-              After submitting the dao,
-              <strong> please contact our admin</strong> to process your dao to
-              be displayed in main page.
+              After submitting the project,
+              <strong> please contact our admin</strong> to process your project
+              to be displayed in main page.
             </p>
           </div>
 
@@ -224,7 +295,7 @@ export default function DaoForm({
             </button>
             <button
               className="w-full rounded-md border border-[#cbd5e0] bg-black p-3 font-bold text-white hover:bg-[#b9c2cc]"
-              onClick={onCollabsAction}
+              onClick={onProjectSubmitAction}
             >
               Submit
             </button>

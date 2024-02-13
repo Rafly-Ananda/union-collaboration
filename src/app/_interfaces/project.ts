@@ -1,18 +1,21 @@
 export enum EmintInfo {
-  preMint = "pre_mint",
-  postMint = "post_mint",
+  PRE = "pre",
+  DAO = "dao",
+  POST = "post",
 }
 
 export interface InewProjectInput {
-  discord_server: string;
+  type?: string;
+  project_name: string;
   description: string;
-  whitelist_role: string;
-  mint_info: EmintInfo;
-  mint_date: string;
+  mint_date?: string;
   supply: number;
-  available_wl_spot: number;
-  discord_link: string;
-  x_link: string;
-  web_link: string;
-  project_logo: HTMLInputElement;
+  website: string;
+  discord: string;
+  twitter: string;
+  mint_info: EmintInfo;
+  avl_wl_spots: number;
+  logo_url?: string;
+  whitelist_role: string;
+  project_logo?: HTMLInputElement;
 }

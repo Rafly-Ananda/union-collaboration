@@ -27,8 +27,6 @@ export default function CollabRequest() {
     externalUserId: userExternal,
   });
 
-  console.log(ownProject);
-
   return (
     <section>
       <div>

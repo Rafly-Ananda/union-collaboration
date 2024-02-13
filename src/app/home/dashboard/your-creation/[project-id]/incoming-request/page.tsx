@@ -21,17 +21,22 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/trpc/react";
+import CollabStatusBadge from "@/app/_components/badges/CollabStatus";
 
 export default function IncomingRequest() {
   const pathName = usePathname();
   const projectId = pathName.split("/").at(-2);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const { data, refetch } = api.project.get.useQuery({ projectId: projectId! });
+  const { data: project } = api.project.get.useQuery({ projectId: projectId! });
+  const { data: collabRequest, isFetched } = api.collab.getAllIncoming.useQuery(
+    {
+      projectId: projectId!,
+      limit: 100,
+    },
+  );
 
-  const onSubmitSearchQuery = async () => {
-    console.log(searchQuery);
-  };
+  console.log(collabRequest);
 
   return (
     <section>
@@ -48,8 +53,10 @@ export default function IncomingRequest() {
           </BreadcrumbItem>
 
           <BreadcrumbItem>
-            <BreadcrumbLink href={`/home/dashboard/your-creation/${data?.id}`}>
-              {data?.project_name}
+            <BreadcrumbLink
+              href={`/home/dashboard/your-creation/${project?.id}`}
+            >
+              {project?.project_name}
             </BreadcrumbLink>
           </BreadcrumbItem>
 
@@ -76,7 +83,7 @@ export default function IncomingRequest() {
                 bg="transparent"
                 aria-label="Submit Link"
                 icon={<SearchIcon color="black" />}
-                onClick={onSubmitSearchQuery}
+                // onClick={onSubmitSearchQuery}
               ></IconButton>
             </InputRightElement>
           </InputGroup>
@@ -97,24 +104,25 @@ export default function IncomingRequest() {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>
-                    <Link href={`${pathName}/1`}>
-                      <button className="rounded-lg border border-[#319795] px-5 py-2 font-semibold text-[#319795] hover:bg-[#319795] hover:text-white">
-                        Quantum Breaker
-                      </button>
-                    </Link>
-                  </Td>
-                  <Td>Offering WL</Td>
-                  <Td>20</Td>
-                  <Td>10</Td>
-                  <Td>Lorem Ipsum</Td>
-                  <Td>
-                    <span className="rounded-md bg-[#38A169] px-2 py-1 font-medium uppercase text-white">
-                      agreed
-                    </span>
-                  </Td>
-                </Tr>
+                {isFetched &&
+                  collabRequest?.projects.map((e, i) => (
+                    <Tr>
+                      <Td>
+                        <Link href={`${pathName}/${e.id}`}>
+                          <button className="rounded-lg border border-[#319795] px-5 py-2 font-semibold text-[#319795] hover:bg-[#319795] hover:text-white">
+                            {e.collab_req_from}
+                          </button>
+                        </Link>
+                      </Td>
+                      <Td>{e.type}</Td>
+                      <Td>{e.wl_spot_amt}</Td>
+                      <Td>{e.wl_team_amt}</Td>
+                      <Td>{e.method}</Td>
+                      <Td>
+                        <CollabStatusBadge collabStatus={e.status} />
+                      </Td>
+                    </Tr>
+                  ))}
               </Tbody>
             </Table>
           </TableContainer>

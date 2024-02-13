@@ -1,11 +1,8 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import {
-  DaoInputValidator,
-  ProjectValidator,
-  CollabInputValidator,
-} from "@/server/validator/project";
+import { ProjectValidator } from "@/server/validator/project";
+import { CollabInputValidator } from "@/server/validator/collab";
 import { projectResponseValidator } from "@/server/validator/index";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { SERVER_CONFIG } from "@/server/_config/config";
@@ -112,33 +109,47 @@ export const projectRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        userId: z.string(),
         logoFile: z.string(),
-        details: ProjectValidator,
+        project: ProjectValidator,
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { userId, logoFile, details } = input;
+      const { logoFile, project } = input;
+      const userExternalId = ctx.session.user.extras.id;
       const s3Client = ctx.s3.connector;
 
-      const { url, fields } = await createPresignedPost(s3Client, {
-        Bucket: ctx.s3.bucket_name,
-        Key: input.logoFile,
-        Conditions: [
-          { bucket: ctx.s3.bucket_name },
-          ["starts-with", "$Content-Type", "image/"],
-        ],
-        Expires: 600,
-      });
+      const payload = {
+        ...project,
+        created_by: userExternalId,
+      };
 
-      // simulate a slow db call
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      try {
+        const r = await (
+          await fetch(`${SERVER_CONFIG.EXTERNAL_API_URL}/union/project`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ...payload }),
+          })
+        ).json();
+        return r;
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new Error(`Error on creating project/dao, ${e.message}`);
+        }
+        // Typescript Sheananigans
+        throw new Error(`Unrecoverable error project/dao`);
+      }
 
-      // return ctx.db.post.create({
-      //     data: {
-      //         name: input.name,
-      //         createdBy: { connect: { id: ctx.session.user.id } },
-      //     },
+      // const { url, fields } = await createPresignedPost(s3Client, {
+      //   Bucket: ctx.s3.bucket_name,
+      //   Key: input.logoFile,
+      //   Conditions: [
+      //     { bucket: ctx.s3.bucket_name },
+      //     ["starts-with", "$Content-Type", "image/"],
+      //   ],
+      //   Expires: 600,
       // });
     }),
 
@@ -172,7 +183,7 @@ export const projectRouter = createTRPCRouter({
     }),
 
   editProject: protectedProcedure
-    .input(z.object({ project: DaoInputValidator }))
+    .input(z.object({ project: ProjectValidator }))
     .mutation(async ({ input }) => {
       const { project } = input;
 
@@ -197,37 +208,6 @@ export const projectRouter = createTRPCRouter({
         }
         // Typescript Sheananigans
         throw new Error(`Unrecoverable error updating project`);
-      }
-    }),
-
-  createCollab: protectedProcedure
-    .input(z.object({ collabReq: CollabInputValidator }))
-    .mutation(async ({ input }) => {
-      const { collabReq } = input;
-
-      try {
-        const r = await (
-          await fetch(
-            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ ...collabReq }),
-            },
-          )
-        ).json();
-
-        console.log(r)
-
-        return r;
-      } catch (e) {
-        if (e instanceof Error) {
-          throw new Error(`Error on creating collab , ${e.message}`);
-        }
-        // Typescript Sheananigans
-        throw new Error(`Unrecoverable error creating collab`);
       }
     }),
 });
