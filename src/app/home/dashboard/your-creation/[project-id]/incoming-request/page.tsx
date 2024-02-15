@@ -36,8 +36,6 @@ export default function IncomingRequest() {
     },
   );
 
-  console.log(collabRequest);
-
   return (
     <section>
       <div>

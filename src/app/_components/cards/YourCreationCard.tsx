@@ -9,15 +9,31 @@ import {
 } from "react-icons/fa6";
 import { RxPaperPlane } from "react-icons/rx";
 import Link from "next/link";
-import deleteMeLater from "../../../../public/assets/delete_me_later.png";
+import notFound from "../../../../public/assets/not_found.png";
 import { Project } from "@/server/validator";
 import ProjectStatusBadge from "../badges/ProjectStatus";
+import { useState, useEffect } from "react";
 
 export default function YourCreationCard({ project }: { project: Project }) {
+  const [isImageError, setIsImageError] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsImageError(false);
+  }, []);
+
   return (
-    <div className="my-5 flex w-full items-start justify-between gap-4 rounded-lg border border-gray-300 bg-white p-4 transition delay-150 duration-300 ease-in-out hover:-translate-y-2">
-      <div>
-        <Image src={deleteMeLater} alt="xoxo" className="w-32 rounded-md" />
+    <div className="my-5 flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-white p-4 transition delay-150 duration-300 ease-in-out hover:-translate-y-2">
+      <div className="skeleton relative h-32 w-40 rounded-md">
+        <Image
+          src={isImageError ? notFound : project?.logo_url!}
+          width={300}
+          height={300}
+          alt="project logo"
+          className="absolute h-full w-full rounded-md object-fill"
+          onError={() => setIsImageError(true)}
+          blurDataURL="../../../../public/assets/not_found.png"
+          placeholder="blur"
+        />
       </div>
       <div className="h-full w-full">
         <div className="flex h-full w-full items-center gap-2">

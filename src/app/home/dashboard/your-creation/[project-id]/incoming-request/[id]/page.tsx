@@ -26,7 +26,7 @@ import Image from "next/image";
 import MintTypeBadge from "@/app/_components/badges/MintTypeBadge";
 import WhitelistInputForm from "@/app/_components/forms/WhitelistInput";
 
-import deleteMeLater from "../../../../../../../../public/assets/delete_me_later.png";
+import notFound from "../../../../../../../../public/assets/not_found.png";
 import contactSupportLogo from "../../../../../../../../public/assets/contact_support_logo.png";
 
 export default function RequestDetail() {
@@ -227,7 +227,7 @@ export default function RequestDetail() {
 
         {/* Project Image Card */}
         <div className="h-full flex-none rounded-md bg-white">
-          <Image src={deleteMeLater} alt="xoxo" className="w-60 rounded-t-md" />
+          <Image src={notFound} alt="xoxo" className="w-60 rounded-t-md" />
 
           <div className="p-2">
             <div className="mb-2 flex flex-col items-center justify-center gap-1">

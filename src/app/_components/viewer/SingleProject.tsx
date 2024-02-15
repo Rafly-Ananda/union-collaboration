@@ -1,25 +1,27 @@
 "use client";
 import { usePathname } from "next/navigation";
+import { api } from "@/trpc/react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaEdit, FaRegWindowClose, FaPlay } from "react-icons/fa";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Divider } from "@chakra-ui/react";
 import { FaXTwitter, FaDiscord, FaGlobe } from "react-icons/fa6";
+import { FaEdit, FaRegWindowClose, FaPlay } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 import notFound from "../../../../../../public/assets/not_found.png";
-import { api } from "@/trpc/react";
-import ProjectStatusBadge from "@/app/_components/badges/ProjectStatus";
 import { dateFormatter } from "@/app/_utils/dateFormatter";
 import { useState, useEffect } from "react";
+import ProjectStatusBadge from "@/app/_components/badges/ProjectStatus";
 
 // Icons
 import supplyIcon from "../../../../../../public/assets/supply_icon.png";
 import mintDateIcon from "../../../../../../public/assets/mint_date_icon.png";
 import wlSlotIcon from "../../../../../../public/assets/wl_slot_icon.png";
 
-export default function CreationViewer() {
+export default function SingleProjectViewer() {
   const [isImageError, setIsImageError] = useState<boolean>(false);
+  const { data: userSession } = useSession();
   const pathName = usePathname();
   const projectId = pathName.split("/").at(-1);
 
@@ -49,13 +51,7 @@ export default function CreationViewer() {
       <div>
         <Breadcrumb separator={<ChevronRightIcon color="gray.500" />}>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/home/dashboard">Dashboard</BreadcrumbLink>
-          </BreadcrumbItem>
-
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/home/dashboard/your-creation">
-              Your Creation
-            </BreadcrumbLink>
+            <BreadcrumbLink href="/home/playground">Playground</BreadcrumbLink>
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
@@ -73,31 +69,43 @@ export default function CreationViewer() {
 
         {/* Project Actions */}
         <div className="flex items-center gap-4">
-          <Link
-            href={`/home/dashboard/your-creation/${projectId}/edit`}
-            className=""
-          >
-            <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#F2994A] hover:text-white ">
-              <FaEdit />
-              Edit
-            </button>
-          </Link>
-          {data?.status === "open" ? (
-            <button
-              className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#E53E3E] p-2 text-sm font-semibold text-[#E53E3E] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#E53E3E] hover:text-white"
-              onClick={() => onCollabsAction(projectId!, "closed")}
-            >
-              <FaRegWindowClose />
-              Close Collabs
-            </button>
+          {userSession?.user.extras.id === data?.created_by ? (
+            <>
+              <Link
+                href={`/home/dashboard/your-creation/${projectId}/edit`}
+                className=""
+              >
+                <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#F2994A] hover:text-white ">
+                  <FaEdit />
+                  Edit
+                </button>
+              </Link>
+              {data?.status === "open" ? (
+                <button
+                  className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#E53E3E] p-2 text-sm font-semibold text-[#E53E3E] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#E53E3E] hover:text-white"
+                  onClick={() => onCollabsAction(projectId!, "closed")}
+                >
+                  <FaRegWindowClose />
+                  Close Collabs
+                </button>
+              ) : (
+                <button
+                  className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#319795] p-2 text-sm font-semibold text-[#319795] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#319795] hover:text-white"
+                  onClick={() => onCollabsAction(projectId!, "open")}
+                >
+                  <FaPlay />
+                  Open Collabs
+                </button>
+              )}
+            </>
           ) : (
-            <button
-              className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#319795] p-2 text-sm font-semibold text-[#319795] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#319795] hover:text-white"
-              onClick={() => onCollabsAction(projectId!, "open")}
-            >
-              <FaPlay />
-              Open Collabs
-            </button>
+            <>
+              <Link href={`/home/playground/project/${projectId}/collab`}>
+                <button className="rounded-md bg-black px-4 py-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1">
+                  Collabs
+                </button>
+              </Link>
+            </>
           )}
         </div>
       </div>

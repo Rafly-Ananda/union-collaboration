@@ -2,10 +2,9 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { ProjectValidator } from "@/server/validator/project";
-import { CollabInputValidator } from "@/server/validator/collab";
 import { projectResponseValidator } from "@/server/validator/index";
-import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { SERVER_CONFIG } from "@/server/_config/config";
+import { genPresignedUrl } from "@/server/_utils/s3/main";
 
 export const projectRouter = createTRPCRouter({
   get: protectedProcedure
@@ -23,6 +22,7 @@ export const projectRouter = createTRPCRouter({
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project?id=${projectId}`,
           )
         ).json();
+
         if (r.message !== "OK") {
           throw new TRPCError({
             message: "Failed fetching project",
@@ -41,8 +41,11 @@ export const projectRouter = createTRPCRouter({
           });
         }
 
+        const imageUrl = await genPresignedUrl(vRes.data.at(0)?.logo_url!);
+
         return {
           ...vRes.data.at(0),
+          logo_url: imageUrl,
         };
       } catch (e) {
         if (e instanceof Error) {
@@ -74,6 +77,7 @@ export const projectRouter = createTRPCRouter({
 
       try {
         const r = await (await fetch(`${fetchUrl}`)).json();
+
         if (r.message !== "OK") {
           throw new TRPCError({
             message: "Failed fetching all projects",
@@ -84,6 +88,7 @@ export const projectRouter = createTRPCRouter({
         const vRes = projectResponseValidator.safeParse(
           r.data.projects.results,
         );
+
         if (!vRes.success) {
           throw new TRPCError({
             message: "Failed z validating all projects",
@@ -92,8 +97,17 @@ export const projectRouter = createTRPCRouter({
           });
         }
 
+        const enrichedWithImg = await Promise.all(
+          vRes.data.map(async (e) => {
+            const imageUrl = await genPresignedUrl(e.logo_url);
+            return { ...e, logo_url: imageUrl };
+          }),
+        );
+
         return {
-          projects: [...vRes.data],
+          projects: [...enrichedWithImg],
+          totalPage: r.data.projects.totalPage,
+          total: r.data.projects.total,
         };
       } catch (e) {
         if (e instanceof Error) {
@@ -109,14 +123,12 @@ export const projectRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        logoFile: z.string(),
         project: ProjectValidator,
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { logoFile, project } = input;
+      const { project } = input;
       const userExternalId = ctx.session.user.extras.id;
-      const s3Client = ctx.s3.connector;
 
       const payload = {
         ...project,
@@ -141,16 +153,6 @@ export const projectRouter = createTRPCRouter({
         // Typescript Sheananigans
         throw new Error(`Unrecoverable error project/dao`);
       }
-
-      // const { url, fields } = await createPresignedPost(s3Client, {
-      //   Bucket: ctx.s3.bucket_name,
-      //   Key: input.logoFile,
-      //   Conditions: [
-      //     { bucket: ctx.s3.bucket_name },
-      //     ["starts-with", "$Content-Type", "image/"],
-      //   ],
-      //   Expires: 600,
-      // });
     }),
 
   editProjectStatus: protectedProcedure

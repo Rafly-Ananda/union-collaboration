@@ -11,8 +11,10 @@ const config = {
       {
         protocol: "https",
         hostname: "cdn.discordapp.com",
-        port: "",
-        pathname: "/avatars/**",
+      },
+      {
+        protocol: "https",
+        hostname: "elephant-union.s3.ap-southeast-1.amazonaws.com",
       },
     ],
   },

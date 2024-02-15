@@ -31,7 +31,6 @@ export default function DaoForm({
     router.back();
   };
 
-
   return (
     <div>
       <div className="mt-5 flex flex-col items-start justify-center gap-2">

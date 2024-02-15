@@ -9,8 +9,10 @@ import { Divider } from "@chakra-ui/react";
 import { FaXTwitter, FaDiscord, FaGlobe } from "react-icons/fa6";
 import { FaEdit, FaRegWindowClose, FaPlay } from "react-icons/fa";
 import { useSession } from "next-auth/react";
-import deleteMeLater from "../../../../../../public/assets/delete_me_later.png";
+import notFound from "../../../../../../public/assets/not_found.png";
 import { dateFormatter } from "@/app/_utils/dateFormatter";
+import { useState, useEffect } from "react";
+import ProjectStatusBadge from "@/app/_components/badges/ProjectStatus";
 
 // Icons
 import supplyIcon from "../../../../../../public/assets/supply_icon.png";
@@ -18,11 +20,14 @@ import mintDateIcon from "../../../../../../public/assets/mint_date_icon.png";
 import wlSlotIcon from "../../../../../../public/assets/wl_slot_icon.png";
 
 export default function ProjectViewer() {
+  const [isImageError, setIsImageError] = useState<boolean>(false);
   const { data: userSession } = useSession();
   const pathName = usePathname();
   const projectId = pathName.split("/").at(-1);
 
-  const { data, refetch } = api.project.get.useQuery({ projectId: projectId! });
+  const { data, refetch, isLoading, isFetching } = api.project.get.useQuery({
+    projectId: projectId!,
+  });
 
   const updateProjectStatus = api.project.editProjectStatus.useMutation({
     onSuccess: () => {
@@ -36,6 +41,10 @@ export default function ProjectViewer() {
       status,
     });
   };
+
+  useEffect(() => {
+    setIsImageError(false);
+  }, []);
 
   return (
     <div>
@@ -55,6 +64,7 @@ export default function ProjectViewer() {
         {/* Title */}
         <div className="flex items-center gap-2">
           <h1 className="text-4xl font-bold">{data?.project_name}</h1>
+          <ProjectStatusBadge projectStatus={data?.status} />
         </div>
 
         {/* Project Actions */}
@@ -101,10 +111,30 @@ export default function ProjectViewer() {
       </div>
 
       <div className="mt-10 flex items-start gap-4">
-        <div className="rounded-md bg-white">
-          <Image src={deleteMeLater} alt="xoxo" className="w-60 rounded-t-md" />
+        <div className="h-full w-60 rounded-md bg-white">
+          <div className="skeleton relative h-48 w-full rounded-none rounded-t-md">
+            <Image
+              src={isImageError ? notFound : data?.logo_url!}
+              width={300}
+              height={300}
+              alt="project logo"
+              className="absolute h-full w-full rounded-t-md object-fill"
+              onError={() => setIsImageError(true)}
+              blurDataURL="../../../../public/assets/not_found.png"
+              placeholder="blur"
+            />
+          </div>
+
           <div className="p-2">
-            <h1 className="mb-2 text-center font-bold">{data?.project_name}</h1>
+            {isLoading || isFetching ? (
+              <div className="my-4 flex items-center justify-center">
+                <div className="skeleton h-2 w-28"></div>
+              </div>
+            ) : (
+              <h1 className="mb-2 text-center font-bold">
+                {data?.project_name}
+              </h1>
+            )}
             <Divider />
             <ul className="mt-2 flex items-center justify-center gap-4">
               <li>
@@ -130,33 +160,35 @@ export default function ProjectViewer() {
           <h1 className="text-lg font-bold">{data?.project_name}</h1>
           <p className="mt-5 text-xs font-light">{data?.description}</p>
 
-          <div className="mt-5 flex w-fit items-center justify-between gap-10">
-            <div className="flex items-center gap-2">
-              <Image src={supplyIcon} alt="xoxo" className="w-6" />
-              <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
-                <span className="text-[#C2C2C2]">{data?.supply} EU</span>
-                <span>Supply</span>
+          {data?.type === "project" && (
+            <div className="mt-5 flex w-fit items-center justify-between gap-10">
+              <div className="flex items-center gap-2">
+                <Image src={supplyIcon} alt="xoxo" className="w-6" />
+                <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
+                  <span className="text-[#C2C2C2]">{data?.supply} EU</span>
+                  <span>Supply</span>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <Image src={mintDateIcon} alt="xoxo" className="w-6" />
-              <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
-                <span className="text-[#C2C2C2]">
-                  {dateFormatter(data?.mint_date!, "long")}
-                </span>
-                <span>Mint Date</span>
+              <div className="flex items-center gap-2">
+                <Image src={mintDateIcon} alt="xoxo" className="w-6" />
+                <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
+                  <span className="text-[#C2C2C2]">
+                    {dateFormatter(data?.mint_date!, "long")}
+                  </span>
+                  <span>Mint Date</span>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <Image src={wlSlotIcon} alt="xoxo" className="w-6" />
-              <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
-                <span className="text-[#C2C2C2]">{data?.avl_wl_spots}</span>
-                <span>Available WL Spot</span>
+              <div className="flex items-center gap-2">
+                <Image src={wlSlotIcon} alt="xoxo" className="w-6" />
+                <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
+                  <span className="text-[#C2C2C2]">{data?.avl_wl_spots}</span>
+                  <span>Available WL Spot</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

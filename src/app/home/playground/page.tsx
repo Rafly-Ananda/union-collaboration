@@ -23,42 +23,24 @@ const graphik = localFont({
 const projectFilter: string[] = ["Pre Mint", "Post Mint", "DAO"];
 
 export default function Playground() {
-  const [paginationPage, setPaginationPage] = useState<number>(0);
+  const [paginationPage, setPaginationPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const { data, isLoading, isError } = api.project.getAll.useQuery({
-    page: 1,
-    pageSize: CLIENT_CONFIG.PAGINATION_LIMIT,
-  });
-
-  // const { data, fetchNextPage, isLoading, isFetchingNextPage } =
-  //   api.project.getPaginate.useInfiniteQuery(
-  //     {
-  //       limit: paginationLimit,
-  //     },
-  //     {
-  //       getNextPageParam: (lastPage) => lastPage.nextCursor,
-  //     },
-  //   );
-
-  // const { data: projectsPaginationQuery } = api.project.getTotalPage.useQuery({
-  //   limit: paginationLimit,
-  // });
+  const { data, isLoading, isError, isRefetching } =
+    api.project.getAll.useQuery({
+      page: paginationPage,
+      pageSize: CLIENT_CONFIG.PAGINATION_LIMIT,
+    });
 
   const handleFetchNextPage = () => {
-    // if (projectsPaginationQuery?.totalPage === page + 1) return;
-    // fetchNextPage();
-    // setPage((prev) => prev + 1);
+    if (paginationPage === data?.totalPage) return;
+    setPaginationPage((p) => p + 1);
   };
 
   const handleFetchPreviousPage = () => {
-    // if (page === 0) return;
-    // setPage((prev) => prev - 1);
+    if (paginationPage === 1) return;
+    setPaginationPage((p) => p - 1);
   };
-
-  // const onCollabsClick = async () => {
-  //   return;
-  // };
 
   return (
     <>
@@ -117,7 +99,7 @@ export default function Playground() {
 
       {/* Project Showcase */}
       <div className="mt-5 flex flex-wrap items-center justify-center gap-5">
-        {isLoading || isError
+        {isLoading || isError || isRefetching
           ? Array.from({ length: CLIENT_CONFIG.PAGINATION_LIMIT }).map(
               (_, i) => <VerticalShowcaseCardSkeleton key={i} />,
             )
@@ -128,7 +110,7 @@ export default function Playground() {
 
       {/* Project Showcase Pagination */}
       <div className="mt-10 flex w-full items-center justify-center gap-10">
-        {isLoading || isError ? (
+        {isLoading || isError || isRefetching ? (
           <>
             <div className="skeleton h-14 w-14 rounded-full"></div>
             <div className="skeleton h-14 w-14 rounded-full"></div>{" "}
@@ -136,6 +118,7 @@ export default function Playground() {
         ) : (
           <>
             <IconButton
+              isDisabled={paginationPage === 1}
               aria-label="previous button"
               bg="black"
               h="full"
@@ -147,6 +130,7 @@ export default function Playground() {
               onClick={handleFetchPreviousPage}
             ></IconButton>
             <IconButton
+              isDisabled={data?.totalPage === paginationPage}
               aria-label="next button"
               bg="black"
               h="full"
