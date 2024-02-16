@@ -20,11 +20,19 @@ import { ChevronRightIcon, SearchIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { api } from "@/trpc/react";
+import CollabStatusBadge from "@/app/_components/badges/CollabStatus";
 
 export default function RequestSent() {
   const pathName = usePathname();
-  const projectIdentifier = pathName.split("/").at(-2);
+  const projectId = pathName.split("/").at(-2);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const { data: project } = api.project.get.useQuery({ projectId: projectId! });
+  const { data: collabRequest, isFetched } = api.collab.getAllSent.useQuery({
+    requestedBy: projectId!,
+    limit: 100,
+  });
 
   const onSubmitSearchQuery = async () => {
     console.log(searchQuery);
@@ -44,6 +52,14 @@ export default function RequestSent() {
             </BreadcrumbLink>
           </BreadcrumbItem>
 
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              href={`/home/dashboard/your-creation/${project?.id}`}
+            >
+              {project?.project_name}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+
           <BreadcrumbItem isCurrentPage>
             <BreadcrumbLink href="#">Request Sent</BreadcrumbLink>
           </BreadcrumbItem>
@@ -52,7 +68,7 @@ export default function RequestSent() {
 
       <div className="my-5 rounded-md bg-white p-6">
         <h6 className="mb-5 flex-none text-lg font-bold">
-          Request Sent by Zeel&apos;s Den
+          Request Sent by {project?.project_name}
         </h6>
         <Divider />
         <div className="mt-5 w-full">
@@ -87,25 +103,30 @@ export default function RequestSent() {
                   <Th>STATUS</Th>
                 </Tr>
               </Thead>
+
+              {collabRequest?.projects.length! < 1 && (
+                <div className="mt-48"></div>
+              )}
               <Tbody>
-                <Tr>
-                  <Td>
-                    <Link href={`${pathName}/1`}>
-                      <button className="rounded-lg border border-[#DD6B20] px-5 py-2 font-semibold text-[#DD6B20] hover:bg-[#DD6B20] hover:text-white">
-                        Quantum Breaker
-                      </button>
-                    </Link>
-                  </Td>
-                  <Td>Offering WL</Td>
-                  <Td>20</Td>
-                  <Td>10</Td>
-                  <Td>Lorem Ipsum</Td>
-                  <Td>
-                    <span className="rounded-md bg-[#38A169] px-2 py-1 font-medium uppercase text-white">
-                      agreed
-                    </span>
-                  </Td>
-                </Tr>
+                {isFetched &&
+                  collabRequest?.projects.map((e, i) => (
+                    <Tr>
+                      <Td>
+                        <Link href={`${pathName}/${e.id}`}>
+                          <button className="rounded-lg border border-[#DD6B20] px-5 py-2 font-semibold text-[#DD6B20] hover:bg-[#DD6B20] hover:text-white">
+                            {e.collab_req_from}
+                          </button>
+                        </Link>
+                      </Td>
+                      <Td>{e.type}</Td>
+                      <Td>{e.wl_spot_amt}</Td>
+                      <Td>{e.wl_team_amt}</Td>
+                      <Td>{e.method}</Td>
+                      <Td>
+                        <CollabStatusBadge collabStatus={e.status} />
+                      </Td>
+                    </Tr>
+                  ))}
               </Tbody>
             </Table>
           </TableContainer>

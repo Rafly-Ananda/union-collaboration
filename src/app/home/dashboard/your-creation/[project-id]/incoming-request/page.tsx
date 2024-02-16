@@ -72,7 +72,7 @@ export default function IncomingRequest() {
         <div className="mt-5 w-full">
           <InputGroup size="md" className="shrink">
             <Input
-              placeholder="Enter the link..."
+              placeholder="Search"
               variant="filled"
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -101,6 +101,9 @@ export default function IncomingRequest() {
                   <Th>STATUS</Th>
                 </Tr>
               </Thead>
+              {collabRequest?.projects.length! < 1 && (
+                <div className="mt-48"></div>
+              )}
               <Tbody>
                 {isFetched &&
                   collabRequest?.projects.map((e, i) => (

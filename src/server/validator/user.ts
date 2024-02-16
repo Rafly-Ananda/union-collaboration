@@ -8,8 +8,8 @@ export const UserExternalValidator = z.object({
   avatar: z.string(),
   is_project: z.boolean(),
   is_dao: z.boolean(),
-  created_at: z.string(),
-  updated_at: z.string(),
+  created_at: z.string().nullish(),
+  updated_at: z.string().nullish(),
 });
 
 export const UserValidator = z.object({
@@ -67,4 +67,13 @@ export const UserGuildValidator = z.object({
   updated_at: z.string(),
   guild_id: z.string(),
   guild_name: z.string(),
+});
+
+export const VerifiedLinksValidator = z.object({
+  id: z.string(),
+  url: z.string(),
+  status: z.enum(["pending", "approved", "rejected"]),
+  created_by: z.string(),
+  created_at: z.string(),
+  updated_at: z.string(),
 });

@@ -16,17 +16,7 @@ datasource db {
 
 // ------------------------------- TABLES ------------------------------- //
 
-model VerifiedLink {
-    id            String    @id @default(cuid())
-    url           String
-    status        VerifiedLinkStatus
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-
-    createdBy     User   @relation(fields: [createdById], references: [id])
-    createdById   String
-
-}
+// *** New Tables Insert Here *** //
 
 // ------------------------------- ENUMS ------------------------------- //
 
@@ -73,7 +63,6 @@ model User {
     extras        Json?
     accounts      Account[]
     sessions      Session[]
-    links         VerifiedLink[]
 }
 
 model VerificationToken {

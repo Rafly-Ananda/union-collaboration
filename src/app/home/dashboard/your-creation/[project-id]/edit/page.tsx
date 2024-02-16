@@ -9,6 +9,7 @@ import ProjectForm from "@/app/_components/forms/Project";
 import DaoForm from "@/app/_components/forms/Dao";
 import { InewProjectInput, EmintInfo, InewDaoInput } from "@/app/_interfaces";
 import { dateFormatter } from "@/app/_utils/dateFormatter";
+import axios from "axios";
 
 export default function EditProject() {
   const router = useRouter();
@@ -49,26 +50,74 @@ export default function EditProject() {
     },
   });
 
+  const uploadPresignedUrlGen = api.s3.createPresignedUrl.useMutation({
+    onSuccess({ url, fields }) {
+      onImageUploadCb(url, fields);
+    },
+  });
+
+  const onImageUploadCb = async (url: string, fields: object) => {
+    const formData = new FormData();
+
+    if (project?.type === "project") {
+      if (newProject) {
+        const payload = {
+          ...fields,
+          "Content-Type": newProject?.project_logo?.type,
+          file: newProject?.project_logo,
+        };
+
+        Object.entries(payload).forEach((e) => {
+          formData.append(e[0], e[1] as string | Blob);
+        });
+
+        await axios.post(url, formData);
+
+        updateProjectorDao.mutate({
+          project: {
+            ...newProject,
+            id: project?.id!,
+            type: project?.type!,
+            logo_url: newProject?.project_logo?.name!,
+          },
+        });
+      }
+    } else {
+      if (newDao) {
+        const payload = {
+          ...fields,
+          "Content-Type": newDao?.project_logo?.type,
+          file: newDao?.project_logo,
+        };
+
+        Object.entries(payload).forEach((e) => {
+          formData.append(e[0], e[1] as string | Blob);
+        });
+
+        await axios.post(url, formData);
+
+        updateProjectorDao.mutate({
+          project: {
+            ...newDao,
+            id: project?.id!,
+            type: project?.type!,
+            mint_info: project?.mint_info!,
+            logo_url: newDao?.project_logo?.name!,
+          },
+        });
+      }
+    }
+  };
+
   const onProjectSubmit = async () => {
-    updateProjectorDao.mutate({
-      project: {
-        ...newProject,
-        id: project?.id!,
-        type: project?.type!,
-        logo_url: "adasds",
-      },
+    uploadPresignedUrlGen.mutate({
+      fileName: newProject?.project_logo?.name!,
     });
   };
 
   const onSubmitDao = async () => {
-    updateProjectorDao.mutate({
-      project: {
-        ...newDao,
-        id: project?.id!,
-        type: project?.type!,
-        mint_info: project?.mint_info!,
-        logo_url: "adasds",
-      },
+    uploadPresignedUrlGen.mutate({
+      fileName: newDao?.project_logo?.name!,
     });
   };
 

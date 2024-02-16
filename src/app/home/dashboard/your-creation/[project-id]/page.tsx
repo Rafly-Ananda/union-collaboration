@@ -82,22 +82,26 @@ export default function CreationViewer() {
               Edit
             </button>
           </Link>
-          {data?.status === "open" ? (
-            <button
-              className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#E53E3E] p-2 text-sm font-semibold text-[#E53E3E] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#E53E3E] hover:text-white"
-              onClick={() => onCollabsAction(projectId!, "closed")}
-            >
-              <FaRegWindowClose />
-              Close Collabs
-            </button>
-          ) : (
-            <button
-              className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#319795] p-2 text-sm font-semibold text-[#319795] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#319795] hover:text-white"
-              onClick={() => onCollabsAction(projectId!, "open")}
-            >
-              <FaPlay />
-              Open Collabs
-            </button>
+          {data?.status !== "pending" && (
+            <>
+              {data?.status === "open" ? (
+                <button
+                  className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#E53E3E] p-2 text-sm font-semibold text-[#E53E3E] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#E53E3E] hover:text-white"
+                  onClick={() => onCollabsAction(projectId!, "closed")}
+                >
+                  <FaRegWindowClose />
+                  Close Collabs
+                </button>
+              ) : (
+                <button
+                  className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#319795] p-2 text-sm font-semibold text-[#319795] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#319795] hover:text-white"
+                  onClick={() => onCollabsAction(projectId!, "open")}
+                >
+                  <FaPlay />
+                  Open Collabs
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

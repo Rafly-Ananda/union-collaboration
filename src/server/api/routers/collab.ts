@@ -56,7 +56,7 @@ export const collabRouter = createTRPCRouter({
       try {
         const r = await (
           await fetch(
-            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request?project_id=${requestedBy}&limit=${limit}`,
+            `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request?requested_by=${requestedBy}&limit=${limit}`,
           )
         ).json();
 

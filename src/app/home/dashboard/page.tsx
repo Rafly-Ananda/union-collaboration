@@ -18,7 +18,7 @@ export default async function Dashboard() {
   const session = await getServerAuthSession();
   const userExternal = session?.user.extras.id;
 
-  const data = await api.project.getAll.query({
+  const projects = await api.project.getAll.query({
     page: 1,
     pageSize: 3,
     externalUserId: userExternal,
@@ -73,7 +73,7 @@ export default async function Dashboard() {
         <Link href="/home/dashboard/create/dao" className="w-full">
           <div className="flex w-full items-center justify-between rounded-md bg-[#FFBE0B] p-6 transition delay-150 duration-300 ease-in-out hover:-translate-y-2">
             <div>
-              <h1 className="text-xl font-bold">Create Dao</h1>
+              <h1 className="text-xl font-bold">Create DAO</h1>
               <p className="w-[80%] text-sm">
                 Create a DAO where you will collaborate with others
               </p>
@@ -92,22 +92,33 @@ export default async function Dashboard() {
       {/* Your Creation */}
       <div className="my-5 rounded-md bg-white p-6">
         <h6 className="flex-none text-base font-bold">Your Creation</h6>
-
-        <div className="mt-5 w-full">
-          {data?.projects.map((e, i) => (
-            <YourCreationCard key={i} project={e} />
-          ))}
-        </div>
-
-        {/* Show All */}
-        <div className="mt-5 flex items-center justify-center">
-          <Link
-            href={`/home/dashboard/your-creation`}
-            className="rounded-lg border border-black px-4 py-2 text-sm font-bold"
-          >
-            See All
-          </Link>
-        </div>
+        {projects?.projects?.length! < 1 ? (
+          <>
+            <div className="mt-5 flex items-center justify-center">
+              <h6 className="flex-none text-base font-light underline">
+                You curently have no Project's/Dao's go ahead and create one of
+                them!
+              </h6>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="mt-5 w-full">
+              {projects?.projects.map((e, i) => (
+                <YourCreationCard key={i} project={e} />
+              ))}
+            </div>
+            {/* Show All */}
+            <div className="mt-5 flex items-center justify-center">
+              <Link
+                href={`/home/dashboard/your-creation`}
+                className="rounded-lg border border-black px-4 py-2 text-sm font-bold"
+              >
+                See All
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

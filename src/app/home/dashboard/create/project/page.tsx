@@ -4,6 +4,7 @@ import { useState } from "react";
 import { api } from "@/trpc/react";
 import { InewProjectInput, EmintInfo } from "@/app/_interfaces";
 import ProjectForm from "@/app/_components/forms/Project";
+import axios from "axios";
 
 export default function CreateProject() {
   const router = useRouter();
@@ -27,17 +28,43 @@ export default function CreateProject() {
     },
   });
 
+  const uploadPresignedUrlGen = api.s3.createPresignedUrl.useMutation({
+    onSuccess({ url, fields }) {
+      onImageUploadCb(url, fields);
+    },
+  });
+
+  const onImageUploadCb = async (url: string, fields: object) => {
+    const formData = new FormData();
+    if (newProject) {
+      const payload = {
+        ...fields,
+        "Content-Type": newProject?.project_logo?.type,
+        file: newProject?.project_logo,
+      };
+
+      Object.entries(payload).forEach((e) => {
+        formData.append(e[0], e[1] as string | Blob);
+      });
+
+      await axios.post(url, formData);
+
+      createProject.mutate({
+        project: {
+          ...newProject,
+          type: "project",
+          guild_id: userGuilds?.find(
+            (e) => e.guild_name === newProject.project_name,
+          )?.guild_id,
+          logo_url: newProject?.project_logo?.name!,
+        },
+      });
+    }
+  };
+
   const onProjectSubmit = async () => {
-    createProject.mutate({
-      logoFile: "",
-      project: {
-        ...newProject,
-        type: "project",
-        logo_url: "adasds",
-        guild_id: userGuilds?.find(
-          (e) => e.guild_name === newProject.project_name,
-        )?.guild_id,
-      },
+    uploadPresignedUrlGen.mutate({
+      fileName: newProject?.project_logo?.name!,
     });
   };
 

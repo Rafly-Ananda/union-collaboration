@@ -8,6 +8,7 @@ import {
   UserGuildValidator,
   TrimmedUserDiscordValidator,
   DiscordGuildValidator,
+  VerifiedLinksValidator,
 } from "./user";
 
 /** TYPES **/
@@ -19,6 +20,7 @@ export type TrimmedUserDiscord = z.infer<typeof TrimmedUserDiscordValidator>;
 export type UserDiscordGuild = z.infer<typeof DiscordGuildValidator>;
 export type UserOwnDiscordGuild = z.infer<typeof UserGuildValidator>;
 export type CollabRequest = z.infer<typeof CollabValidator>;
+export type VerifiedLinks = z.infer<typeof VerifiedLinksValidator>;
 
 /** VALIDATORS **/
 export const projectResponseValidator = z.array(ProjectValidator);
@@ -27,3 +29,4 @@ export const DiscordGuildResponseValidator = DiscordGuildValidator;
 export const UserExternalResponseValidator = UserExternalValidator;
 export const UserGuildResponseValidator = z.array(UserGuildValidator);
 export const CollabRequestResponseValidator = z.array(CollabValidator);
+export const VerifiedLinksResponseValidator = z.array(VerifiedLinksValidator);
