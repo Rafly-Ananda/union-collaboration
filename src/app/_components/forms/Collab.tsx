@@ -42,9 +42,7 @@ export default function CollaborationRequestForm({
 
   const createCollabRequest = api.collab.create.useMutation({
     onSuccess: () => {
-      router.replace(
-        `/home/dashboard/your-creation/${representedAs}/incoming-request`,
-      );
+      router.back();
     },
   });
 

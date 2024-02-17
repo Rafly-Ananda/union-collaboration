@@ -104,9 +104,6 @@ export default function RequestSent() {
                 </Tr>
               </Thead>
 
-              {collabRequest?.projects.length! < 1 && (
-                <div className="mt-48"></div>
-              )}
               <Tbody>
                 {isFetched &&
                   collabRequest?.projects.map((e, i) => (
@@ -114,7 +111,7 @@ export default function RequestSent() {
                       <Td>
                         <Link href={`${pathName}/${e.id}`}>
                           <button className="rounded-lg border border-[#DD6B20] px-5 py-2 font-semibold text-[#DD6B20] hover:bg-[#DD6B20] hover:text-white">
-                            {e.collab_req_from}
+                            {e.project_name}
                           </button>
                         </Link>
                       </Td>
@@ -130,6 +127,13 @@ export default function RequestSent() {
               </Tbody>
             </Table>
           </TableContainer>
+          {collabRequest?.projects.length! < 1 && (
+            <div className="my-14 flex w-full items-center justify-center">
+              <h6 className="flex-none text-base font-light underline">
+                You Project/Dao curently don't have any Incoming Collab Request.
+              </h6>
+            </div>
+          )}
         </div>
       </div>
     </section>

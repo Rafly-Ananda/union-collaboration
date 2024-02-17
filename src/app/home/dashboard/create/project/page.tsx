@@ -8,7 +8,6 @@ import axios from "axios";
 
 export default function CreateProject() {
   const router = useRouter();
-  const { data: userGuilds } = api.user.getGuilds.useQuery();
   const [newProject, setNewProject] = useState<InewProjectInput>({
     project_name: "default",
     description: "",
@@ -17,9 +16,18 @@ export default function CreateProject() {
     discord: "",
     twitter: "",
     mint_info: EmintInfo.PRE,
+    mint_price: 0,
     mint_date: "",
     avl_wl_spots: 0,
     whitelist_role: "default",
+  });
+
+  const { data: userGuilds } = api.user.getGuilds.useQuery();
+
+  const { data: guildRoles } = api.user.getGuildsRoles.useQuery({
+    guild_discord_id:
+      userGuilds?.find((e) => e.guild_name === newProject.project_name)
+        ?.guild_id! || "random",
   });
 
   const createProject = api.project.create.useMutation({
@@ -71,6 +79,7 @@ export default function CreateProject() {
   return (
     <ProjectForm
       userGuilds={userGuilds}
+      userGuildRoles={guildRoles}
       onProjectSubmitAction={onProjectSubmit}
       localProjectState={newProject}
       localProjectSetState={setNewProject}

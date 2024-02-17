@@ -101,13 +101,11 @@ export default function IncomingRequest() {
                   <Th>STATUS</Th>
                 </Tr>
               </Thead>
-              {collabRequest?.projects.length! < 1 && (
-                <div className="mt-48"></div>
-              )}
+
               <Tbody>
                 {isFetched &&
                   collabRequest?.projects.map((e, i) => (
-                    <Tr>
+                    <Tr key={e.project_name + i}>
                       <Td>
                         <Link href={`${pathName}/${e.id}`}>
                           <button className="rounded-lg border border-[#319795] px-5 py-2 font-semibold text-[#319795] hover:bg-[#319795] hover:text-white">
@@ -127,6 +125,13 @@ export default function IncomingRequest() {
               </Tbody>
             </Table>
           </TableContainer>
+          {collabRequest?.projects.length! < 1 && (
+            <div className="my-14 flex w-full items-center justify-center">
+              <h6 className="flex-none text-base font-light underline">
+                You Project/Dao curently don't have any Incoming Collab Request.
+              </h6>
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -9,7 +9,6 @@ import axios from "axios";
 
 export default function CreateDao() {
   const router = useRouter();
-  const { data: userGuilds } = api.user.getGuilds.useQuery();
   const [newDao, setNewDao] = useState<InewDaoInput>({
     project_name: "default",
     description: "",
@@ -17,6 +16,14 @@ export default function CreateDao() {
     discord: "",
     twitter: "",
     website: "",
+  });
+
+  const { data: userGuilds } = api.user.getGuilds.useQuery();
+
+  const { data: guildRoles } = api.user.getGuildsRoles.useQuery({
+    guild_discord_id:
+      userGuilds?.find((e) => e.guild_name === newDao.project_name)
+        ?.guild_id! || "random",
   });
 
   const createDao = api.project.create.useMutation({
@@ -69,6 +76,7 @@ export default function CreateDao() {
   return (
     <DaoForm
       userGuilds={userGuilds}
+      userGuildRoles={guildRoles}
       onDaoubmitAction={onDaoSubmit}
       localDaoState={newDao}
       localDaoSetState={setNewDao}

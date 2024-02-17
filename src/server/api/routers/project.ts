@@ -46,6 +46,7 @@ export const projectRouter = createTRPCRouter({
         return {
           ...vRes.data.at(0),
           logo_url: imageUrl,
+          logo_base_url: vRes.data.at(0)?.logo_url!
         };
       } catch (e) {
         if (e instanceof Error) {
@@ -99,7 +100,7 @@ export const projectRouter = createTRPCRouter({
 
         const enrichedWithImg = await Promise.all(
           vRes.data.map(async (e) => {
-            const imageUrl = await genPresignedUrl(e.logo_url);
+            const imageUrl = await genPresignedUrl(e?.logo_url!);
             return { ...e, logo_url: imageUrl };
           }),
         );

@@ -45,7 +45,9 @@ export default function VerticalShowcaseCard({
       </div>
 
       <div className="z-10 flex h-full w-full flex-col items-center justify-between gap-4 rounded-b-3xl bg-white px-2 pb-4 pt-2">
-        <div className="text-center">
+        <div
+          className={`h-full w-full text-center ${project.type === "dao" && "flex flex-col items-center justify-center"}`}
+        >
           <h1 className="font-medium">{project.project_name}</h1>
           <p className="w-full text-ellipsis text-xs text-gray-400">
             {project.description}
@@ -62,7 +64,7 @@ export default function VerticalShowcaseCard({
               {/* Mint Price */}
               <div className="flex w-full items-center justify-between">
                 <p>Mint Price</p>
-                <span>TBA</span>
+                <span>{project.mint_price}</span>
               </div>
               {/* Mint Date */}
               <div className="flex w-full items-center justify-between">

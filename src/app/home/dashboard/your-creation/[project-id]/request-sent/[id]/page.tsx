@@ -22,16 +22,43 @@ import { RiTeamFill } from "react-icons/ri";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { api } from "@/trpc/react";
+import { useState, useEffect } from "react";
 
 import MintTypeBadge from "@/app/_components/badges/MintTypeBadge";
 import WhitelistInputForm from "@/app/_components/forms/WhitelistInput";
+import CollabStatusBadge from "@/app/_components/badges/CollabStatus";
 
 import notFound from "../../../../../../../../public/assets/not_found.png";
 import contactSupportLogo from "../../../../../../../../public/assets/contact_support_logo.png";
 
 export default function RequestDetail() {
   const pathName = usePathname();
-  const projectIdentifier = pathName.split("/").at(-3);
+  const projectId = pathName.split("/").at(-3);
+  const collabRequestId = pathName.split("/").at(-1);
+  const [isImageError, setIsImageError] = useState<boolean>(false);
+
+  const { data: project } = api.project.get.useQuery({
+    projectId: projectId!,
+  });
+
+  const { data: collab, refetch } = api.collab.getSingle.useQuery({
+    projectId: collabRequestId!,
+  });
+
+  const { data: targetCollab } = api.project.get.useQuery({
+    projectId: collab?.project_id!,
+  });
+
+  const updateCollabStatus = api.collab.updateStatus.useMutation({
+    onSuccess() {
+      refetch();
+    },
+  });
+
+  useEffect(() => {
+    setIsImageError(false);
+  }, [targetCollab]);
 
   return (
     <section>
@@ -48,15 +75,21 @@ export default function RequestDetail() {
           </BreadcrumbItem>
 
           <BreadcrumbItem>
+            <BreadcrumbLink href={`/home/dashboard/your-creation/${projectId}`}>
+              {project?.project_name}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+
+          <BreadcrumbItem>
             <BreadcrumbLink
-              href={`/home/dashboard/your-creation/${projectIdentifier}/request-sent`}
+              href={`/home/dashboard/your-creation/${projectId}/request-sent`}
             >
               Request Sent
             </BreadcrumbLink>
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink href="#">Request Detail</BreadcrumbLink>
+            <BreadcrumbLink href="#">Detail</BreadcrumbLink>
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
@@ -64,8 +97,8 @@ export default function RequestDetail() {
       <div className="mt-5 flex items-center justify-between">
         {/* Title */}
         <div className="flex items-center gap-2">
-          <h1 className="text-4xl font-bold text-[#319795]">
-            Request to Quantum Breaker
+          <h1 className="text-4xl font-bold text-[#DD6B20]">
+            Request to {collab?.project_name}
           </h1>
         </div>
 
@@ -95,7 +128,7 @@ export default function RequestDetail() {
             <FaArrowRightFromBracket className="text-2xl" />
             <div className="flex flex-col leading-tight">
               <span className="font-bold text-[#C2C2C2]">From</span>
-              <span className="font-bold">Zeel Den</span>
+              <span className="font-bold">{collab?.collab_req_from}</span>
             </div>
           </div>
 
@@ -104,7 +137,7 @@ export default function RequestDetail() {
             <FaArrowRightToBracket className="text-2xl" />
             <div className="flex flex-col leading-tight">
               <span className="font-bold text-[#C2C2C2]">To</span>
-              <span className="font-bold">Quantum Breaker</span>
+              <span className="font-bold">{collab?.project_name}</span>
             </div>
           </div>
 
@@ -113,7 +146,7 @@ export default function RequestDetail() {
             <IoTriangle className="text-2xl" />
             <div className="flex flex-col leading-tight">
               <span className="font-bold text-[#C2C2C2]">WL For Team</span>
-              <span className="font-bold">10</span>
+              <span className="font-bold">{collab?.wl_team_amt}</span>
             </div>
           </div>
 
@@ -122,7 +155,7 @@ export default function RequestDetail() {
             <RiTeamFill className="text-2xl" />
             <div className="flex flex-col leading-tight">
               <span className="font-bold text-[#C2C2C2]">Collaboration</span>
-              <span className="font-bold">Offering WL</span>
+              <span className="font-bold">{collab?.type}</span>
             </div>
           </div>
 
@@ -131,7 +164,7 @@ export default function RequestDetail() {
             <FaStar className="text-2xl" />
             <div className="flex flex-col leading-tight">
               <span className="font-bold text-[#C2C2C2]">WL Spots</span>
-              <span className="font-bold">20</span>
+              <span className="font-bold">{collab?.wl_spot_amt}</span>
             </div>
           </div>
 
@@ -139,10 +172,8 @@ export default function RequestDetail() {
           <div className="flex w-52 items-center gap-2">
             <FaInfoCircle className="text-2xl" />
             <div className="flex flex-col leading-tight">
-              <span className="font-bold text-[#C2C2C2]">Status</span>
-              <span className="font-bold text-[#43936C]">Agreed</span>
-              <span className="font-bold text-[#E53E3E]">Rejected</span>
-              <span className="font-bold text-[#DD6B20]">On Offering</span>
+              <span className="mb-1 font-bold text-[#C2C2C2]">Status</span>
+              <CollabStatusBadge collabStatus={collab?.status} />
             </div>
           </div>
         </div>
@@ -156,41 +187,36 @@ export default function RequestDetail() {
             <h6 className="mb-2 flex-none text-base font-bold">
               Collab Method
             </h6>
-            <p className="text-xs">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+            <p className="text-xs">{collab?.method}</p>
           </div>
 
           {/* Notes */}
           <div className="grow rounded-md bg-white p-6">
             <h6 className="mb-2 flex-none text-base font-bold">Notes</h6>
-            <p className="text-xs">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+            <p className="text-xs">{collab?.note}</p>
           </div>
         </div>
 
         {/* Project Image Card */}
         <div className="h-full flex-none rounded-md bg-white">
-          <Image src={notFound} alt="xoxo" className="w-60 rounded-t-md" />
+          <div className="skeleton relative h-60 w-72  rounded-none rounded-t-md">
+            <Image
+              src={isImageError ? notFound : targetCollab?.logo_url!}
+              width={300}
+              height={300}
+              alt="project logo"
+              className="absolute h-full w-full rounded-t-md object-fill"
+              onError={() => setIsImageError(true)}
+              blurDataURL="../../../../public/assets/not_found.png"
+              placeholder="blur"
+            />
+          </div>
 
           <div className="p-2">
             <div className="mb-2 flex flex-col items-center justify-center gap-1">
-              <h1 className="text-center font-bold">Zeels Den</h1>
-              <MintTypeBadge badgeType="pre-mint" />
-              <Link href={`/home/playground/project/${projectIdentifier}`}>
+              <h1 className="text-center font-bold">{collab?.project_name}</h1>
+              {/* <MintTypeBadge badgeType="pre-mint" /> */}
+              <Link href={`/home/playground/project/${collab?.project_id}`}>
                 <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#3182CE] p-2 text-sm font-semibold text-[#3182CE] hover:bg-[#3182CE] hover:text-white">
                   Details
                 </button>
@@ -199,17 +225,17 @@ export default function RequestDetail() {
             <Divider />
             <ul className="mt-2 flex items-center justify-center gap-4">
               <li>
-                <a href="www.twitter.com">
+                <a href={targetCollab?.twitter}>
                   <FaXTwitter color="#C2C2C2" />
                 </a>
               </li>
               <li>
-                <a href="www.discord.com">
+                <a href={targetCollab?.discord}>
                   <FaDiscord color="#C2C2C2" />
                 </a>
               </li>
               <li>
-                <a href="www.google.com">
+                <a href={targetCollab?.website}>
                   <FaGlobe color="#C2C2C2" />
                 </a>
               </li>
@@ -220,7 +246,12 @@ export default function RequestDetail() {
 
       {/* OPTIONAL WHITELIST INPUT FORM */}
       <div className="mt-5 h-full w-full">
-        <WhitelistInputForm projectId={projectIdentifier} />
+        <WhitelistInputForm
+          receiver={targetCollab}
+          requester={project}
+          collabDetail={collab}
+          requestType="sent"
+        />
       </div>
     </section>
   );

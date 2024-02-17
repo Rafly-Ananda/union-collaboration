@@ -1,8 +1,8 @@
 import type { InewProjectInput } from "./project";
 import type { InewDaoInput } from "./dao";
-import type { INewCollaborationRequest } from "./collaboration";
+import type { INewCollaborationRequest, ICollaborationRequest } from "./collaboration";
 import type { InewWhitelistInput, EWhitelistType } from "./whitelist";
-import type { IUser, IUserGuilds } from "./user";
+import type { IUser, IUserGuilds, IUserGuildRoles } from "./user";
 import { EmintInfo } from "./project";
 
 export interface Iguild {
@@ -43,6 +43,8 @@ export type {
   InewWhitelistInput,
   EWhitelistType,
   IUserGuilds,
+  IUserGuildRoles,
+  ICollaborationRequest
 };
 
 export { EmintInfo };

@@ -157,7 +157,7 @@ export default function ProjectViewer() {
         </div>
 
         <div className="h-full w-full grow rounded-md bg-white p-5">
-          <h1 className="text-lg font-bold">{data?.project_name}</h1>
+          <h1 className="text-lg font-bold">About Project</h1>
           <p className="mt-5 text-xs font-light">{data?.description}</p>
 
           {data?.type === "project" && (

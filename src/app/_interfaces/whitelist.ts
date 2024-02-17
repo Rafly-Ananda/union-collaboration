@@ -4,6 +4,6 @@ export enum EWhitelistType {
 }
 
 export interface InewWhitelistInput {
-  whitelist_type: EWhitelistType;
+  whitelist_type: string;
   whitelisted_user: string;
 }

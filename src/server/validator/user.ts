@@ -55,6 +55,11 @@ export const DiscordGuildValidator = z.object({
   features: z.array(z.string()),
 });
 
+export const DiscordGuildRolesValidator = z.object({
+  server: z.string(),
+  roles: z.array(z.string()),
+});
+
 export const UserGuildValidator = z.object({
   id: z.string(),
   discord_id: z.string(),

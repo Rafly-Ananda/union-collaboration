@@ -19,3 +19,8 @@ export interface IUserGuilds {
   guild_id: string;
   guild_name: string;
 }
+
+export interface IUserGuildRoles {
+  server: string;
+  roles: string[];
+}

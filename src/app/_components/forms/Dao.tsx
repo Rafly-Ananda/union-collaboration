@@ -1,10 +1,15 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input, Select, Textarea } from "@chakra-ui/react";
 import { FormControl, FormLabel, FormHelperText } from "@chakra-ui/react";
 import localFont from "next/font/local";
-import type { IProject, InewDaoInput, IUserGuilds } from "@/app/_interfaces";
+import type {
+  IProject,
+  InewDaoInput,
+  IUserGuilds,
+  IUserGuildRoles,
+} from "@/app/_interfaces";
 import { api } from "@/trpc/react";
 
 const graphik = localFont({
@@ -14,33 +19,59 @@ const graphik = localFont({
 
 export default function DaoForm({
   dao,
+  userGuildRoles,
   userGuilds,
   onDaoubmitAction,
   localDaoState,
   localDaoSetState,
 }: {
   dao?: IProject | undefined;
+  userGuildRoles: IUserGuildRoles | undefined;
   userGuilds: IUserGuilds[] | undefined;
   onDaoubmitAction: () => void;
   localDaoState: InewDaoInput;
   localDaoSetState: React.Dispatch<React.SetStateAction<InewDaoInput>>;
 }) {
   const router = useRouter();
+  const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
+  const formRef = useRef(null);
 
   const onBackClick = () => {
     router.back();
   };
 
+  const cb = (entries: IntersectionObserverEntry[]) => {
+    const isIntersecting = entries.at(0)?.isIntersecting;
+    setIsFormVisible(isIntersecting ?? false);
+  };
+
+  const opts = {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.85,
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(cb, opts);
+    if (formRef.current) observer.observe(formRef.current);
+
+    return () => {
+      if (formRef.current) observer.unobserve(formRef.current);
+    };
+  }, [formRef, opts]);
+
   return (
     <div>
-      <div className="mt-5 flex flex-col items-start justify-center gap-2">
+      <div ref={formRef}></div>
+      <div className="flex flex-col items-start justify-center gap-2">
         <h1 className={`${graphik.className} text-5xl font-bold`}>
           {dao ? "Edit" : "Create"} Dao
         </h1>
         <p>Please fill the form.</p>
       </div>
 
-      <div className="mt-5 flex w-full gap-10">
+      <div className="mt-5 flex w-full gap-10 ">
+        {/* Form */}
         <div className="w-[65%] rounded-xl bg-[#FBFBFB] px-5 py-10">
           {/* Dao Server */}
           <FormControl isRequired={true}>
@@ -94,6 +125,7 @@ export default function DaoForm({
             <FormLabel>Whitelist Role</FormLabel>
             <div className=" flex gap-4">
               <Select
+                isDisabled={userGuildRoles?.roles?.length! < 1 ? true : false}
                 className="w-[80%]"
                 name="whitelist_role"
                 value={localDaoState.whitelist_role}
@@ -107,9 +139,11 @@ export default function DaoForm({
                 <option hidden disabled value="default">
                   Select
                 </option>
-                <option>Server A</option>
-                <option>Server B</option>
-                <option>Server C</option>
+                {userGuildRoles?.roles?.map((e, i) => (
+                  <option value={e} key={e + i}>
+                    {e}
+                  </option>
+                ))}
               </Select>
               <a
                 href="https://discord.com/oauth2/authorize?client_id=1206650650193174540&scope=bot&permissions=268435456"
@@ -191,7 +225,7 @@ export default function DaoForm({
         </div>
 
         {/* Submits */}
-        <div className="w-[30%]">
+        <div className={`sticky top-0 h-fit w-[30%] `}>
           <div className="rounded-xl  bg-[#FFF2CE] px-5 py-10 ">
             <p className="font-bold text-[#856100]">Attention</p>
             <div className="h-[2px] w-full"></div>

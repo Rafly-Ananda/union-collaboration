@@ -28,6 +28,7 @@ export default function EditProject() {
     discord: project ? project.discord! : "",
     twitter: project ? project.twitter! : "",
     mint_info: project ? project?.mint_info! : EmintInfo.PRE,
+    mint_price: project ? project?.mint_price! : 0,
     mint_date: project
       ? dateFormatter(project?.mint_date!, "short", "-", true)
       : "",
@@ -42,6 +43,18 @@ export default function EditProject() {
     discord: project ? project.discord! : "",
     twitter: project ? project.twitter! : "",
     website: project ? project.website! : "",
+  });
+
+  const { data: guildRolesOnProject } = api.user.getGuildsRoles.useQuery({
+    guild_discord_id:
+      userGuilds?.find((e) => e.guild_name === newProject.project_name)
+        ?.guild_id! || "random",
+  });
+
+  const { data: guildRolesOnDao } = api.user.getGuildsRoles.useQuery({
+    guild_discord_id:
+      userGuilds?.find((e) => e.guild_name === newDao.project_name)
+        ?.guild_id! || "random",
   });
 
   const updateProjectorDao = api.project.editProject.useMutation({
@@ -110,15 +123,38 @@ export default function EditProject() {
   };
 
   const onProjectSubmit = async () => {
-    uploadPresignedUrlGen.mutate({
-      fileName: newProject?.project_logo?.name!,
-    });
+    if (newProject?.project_logo) {
+      uploadPresignedUrlGen.mutate({
+        fileName: newProject?.project_logo?.name!,
+      });
+    } else {
+      updateProjectorDao.mutate({
+        project: {
+          ...newProject,
+          id: project?.id!,
+          type: project?.type!,
+          logo_url: project?.logo_base_url,
+        },
+      });
+    }
   };
 
   const onSubmitDao = async () => {
-    uploadPresignedUrlGen.mutate({
-      fileName: newDao?.project_logo?.name!,
-    });
+    if (newDao?.project_logo) {
+      uploadPresignedUrlGen.mutate({
+        fileName: newDao?.project_logo?.name!,
+      });
+    } else {
+      updateProjectorDao.mutate({
+        project: {
+          ...newDao,
+          id: project?.id!,
+          type: project?.type!,
+          mint_info: project?.mint_info!,
+          logo_url: project?.logo_base_url,
+        },
+      });
+    }
   };
 
   return (
@@ -157,6 +193,7 @@ export default function EditProject() {
                 onProjectSubmitAction={onProjectSubmit}
                 localProjectState={newProject}
                 localProjectSetState={setNewProject}
+                userGuildRoles={guildRolesOnProject}
               />
             ) : (
               <DaoForm
@@ -165,6 +202,7 @@ export default function EditProject() {
                 onDaoubmitAction={onSubmitDao}
                 localDaoState={newDao}
                 localDaoSetState={setNewDao}
+                userGuildRoles={guildRolesOnDao}
               />
             )}
           </>

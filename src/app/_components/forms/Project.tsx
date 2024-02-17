@@ -19,6 +19,7 @@ import {
   InewProjectInput,
   IUserGuilds,
   EmintInfo,
+  IUserGuildRoles,
 } from "@/app/_interfaces";
 
 const graphik = localFont({
@@ -28,12 +29,14 @@ const graphik = localFont({
 
 export default function ProjectForm({
   project,
+  userGuildRoles,
   userGuilds,
   onProjectSubmitAction,
   localProjectState,
   localProjectSetState,
 }: {
   project?: IProject | undefined;
+  userGuildRoles: IUserGuildRoles | undefined;
   userGuilds: IUserGuilds[] | undefined;
   onProjectSubmitAction: () => void;
   localProjectState: InewProjectInput;
@@ -46,7 +49,7 @@ export default function ProjectForm({
   };
 
   return (
-    <div className="mt-5">
+    <div>
       <div className="flex flex-col items-start justify-center gap-2">
         <h1 className={`${graphik.className} text-5xl font-bold`}>
           {project ? "Edit" : "Create"} Project
@@ -108,9 +111,10 @@ export default function ProjectForm({
             <FormLabel>Whitelist Role</FormLabel>
             <div className=" flex gap-4">
               <Select
-                name="whitelist_role"
+                isDisabled={userGuildRoles?.roles?.length! < 1 ? true : false}
                 className="w-[80%]"
-                value={localProjectState?.whitelist_role}
+                name="whitelist_role"
+                value={localProjectState.whitelist_role}
                 onChange={(e) =>
                   localProjectSetState((prev) => ({
                     ...prev!,
@@ -121,9 +125,11 @@ export default function ProjectForm({
                 <option hidden disabled value="default">
                   Select
                 </option>
-                <option>Server A</option>
-                <option>Server B</option>
-                <option>Server C</option>
+                {userGuildRoles?.roles?.map((e, i) => (
+                  <option value={e} key={e + i}>
+                    {e}
+                  </option>
+                ))}
               </Select>
               <a
                 href="https://discord.com/oauth2/authorize?client_id=1206650650193174540&scope=bot&permissions=268435456"
@@ -175,6 +181,22 @@ export default function ProjectForm({
                 }))
               }
             />
+          </FormControl>
+
+          {/* Mint Price */}
+          <FormControl className="mt-5">
+            <FormLabel>Mint Price</FormLabel>
+            <NumberInput value={localProjectState?.mint_price}>
+              <NumberInputField
+                name="mint_price"
+                onChange={(e) =>
+                  localProjectSetState((prev) => ({
+                    ...prev!,
+                    [e.target.name]: +e.target.value,
+                  }))
+                }
+              />
+            </NumberInput>
           </FormControl>
 
           {/* Supply */}

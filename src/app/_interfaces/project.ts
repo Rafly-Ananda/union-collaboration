@@ -14,6 +14,7 @@ export interface InewProjectInput {
   discord: string;
   twitter: string;
   mint_info: EmintInfo;
+  mint_price: number;
   avl_wl_spots: number;
   logo_url?: string;
   whitelist_role: string;
