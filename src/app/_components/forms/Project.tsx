@@ -134,6 +134,7 @@ export default function ProjectForm({
               <a
                 href="https://discord.com/oauth2/authorize?client_id=1206650650193174540&scope=bot&permissions=268435456"
                 className="w-[20%]"
+                target="_blank"
               >
                 <button className="h-full w-full rounded-md border border-[#cbd5e0] font-bold hover:bg-[#b9c2cc]">
                   Invite Bot

@@ -93,6 +93,8 @@ export default function RequestDetail() {
       targetServerDiscId: collab?.guild_id_from!,
     };
 
+    console.log(payload);
+
     applyWhiteList.mutate({ ...payload });
   };
 
@@ -333,18 +335,22 @@ export default function RequestDetail() {
         </div>
       </div>
 
-      {/* If Collab is Offering WL Receiver Must Fill a Form */}
-      <div className="mt-5 h-full w-full">
-        <WhitelistInputForm
-          receiver={project}
-          requester={requester}
-          collabDetail={collab}
-          requestType="incoming"
-          whiteListReq={whiteListReq}
-          setWhitelistReq={setWhitelistReq}
-          onWhitelistSubmit={onWishlistFormSubmit}
-        />
-      </div>
+      {collab?.status !== "On Offering" && (
+        <>
+          {/* If Collab is Offering WL Receiver Must Fill a Form */}
+          <div className="mt-5 h-full w-full">
+            <WhitelistInputForm
+              receiver={project}
+              requester={requester}
+              collabDetail={collab}
+              requestType="incoming"
+              whiteListReq={whiteListReq}
+              setWhitelistReq={setWhitelistReq}
+              onWhitelistSubmit={onWishlistFormSubmit}
+            />
+          </div>
+        </>
+      )}
     </section>
   );
 }

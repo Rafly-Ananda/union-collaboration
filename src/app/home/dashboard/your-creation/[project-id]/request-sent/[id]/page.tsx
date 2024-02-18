@@ -29,6 +29,8 @@ import MintTypeBadge from "@/app/_components/badges/MintTypeBadge";
 import WhitelistInputForm from "@/app/_components/forms/WhitelistInput";
 import CollabStatusBadge from "@/app/_components/badges/CollabStatus";
 
+import { InewWhitelistInput } from "@/app/_interfaces";
+
 import notFound from "../../../../../../../../public/assets/not_found.png";
 import contactSupportLogo from "../../../../../../../../public/assets/contact_support_logo.png";
 
@@ -37,12 +39,15 @@ export default function RequestDetail() {
   const projectId = pathName.split("/").at(-3);
   const collabRequestId = pathName.split("/").at(-1);
   const [isImageError, setIsImageError] = useState<boolean>(false);
+  const [whiteListReq, setWhitelistReq] = useState<
+    InewWhitelistInput | undefined
+  >(undefined);
 
   const { data: project } = api.project.get.useQuery({
     projectId: projectId!,
   });
 
-  const { data: collab, refetch } = api.collab.getSingle.useQuery({
+  const { data: collab } = api.collab.getSingle.useQuery({
     projectId: collabRequestId!,
   });
 
@@ -50,11 +55,26 @@ export default function RequestDetail() {
     projectId: collab?.project_id!,
   });
 
-  const updateCollabStatus = api.collab.updateStatus.useMutation({
+  const applyWhiteList = api.collab.collabAddRole.useMutation({
     onSuccess() {
-      refetch();
+      console.log("success");
     },
   });
+
+  const onWishlistFormSubmit = () => {
+    // incoming collab payload handler
+    const payload = {
+      // wl_role: requester?.whitelist_role!,
+      wl_list: [whiteListReq?.whitelisted_user!],
+      collabReqId: collab?.id!,
+      type: Number(whiteListReq?.whitelist_type!),
+      targetServerDiscId: collab?.guild_id_from!,
+    };
+
+    console.log(payload);
+
+    // applyWhiteList.mutate({ ...payload });
+  };
 
   useEffect(() => {
     setIsImageError(false);
@@ -244,15 +264,22 @@ export default function RequestDetail() {
         </div>
       </div>
 
-      {/* OPTIONAL WHITELIST INPUT FORM */}
-      <div className="mt-5 h-full w-full">
-        <WhitelistInputForm
-          receiver={targetCollab}
-          requester={project}
-          collabDetail={collab}
-          requestType="sent"
-        />
-      </div>
+      {collab?.status !== "On Offering" && (
+        <>
+          {/* OPTIONAL WHITELIST INPUT FORM */}
+          <div className="mt-5 h-full w-full">
+            <WhitelistInputForm
+              receiver={targetCollab}
+              requester={project}
+              collabDetail={collab}
+              requestType="sent"
+              whiteListReq={whiteListReq}
+              setWhitelistReq={setWhitelistReq}
+              onWhitelistSubmit={onWishlistFormSubmit}
+            />
+          </div>
+        </>
+      )}
     </section>
   );
 }
