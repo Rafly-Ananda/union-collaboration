@@ -92,12 +92,12 @@ export default async function Dashboard() {
       {/* Your Creation */}
       <div className="my-5 rounded-md bg-white p-6">
         <h6 className="flex-none text-base font-bold">Your Creation</h6>
-        {projects?.projects?.length! < 1 ? (
+        {projects && projects?.projects?.length < 1 ? (
           <>
             <div className="mt-5 flex items-center justify-center">
               <h6 className="flex-none text-base font-light underline">
-                You curently have no Project's/Dao's go ahead and create one of
-                them!
+                You curently have no Project&apos;s/Dao&apos;s go ahead and
+                create one of them!
               </h6>
             </div>
           </>

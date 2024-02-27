@@ -10,7 +10,6 @@ import type {
   IUserGuilds,
   IUserGuildRoles,
 } from "@/app/_interfaces";
-import { api } from "@/trpc/react";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
@@ -82,7 +81,7 @@ export default function DaoForm({
               value={localDaoState.project_name}
               onChange={(e) =>
                 localDaoSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -113,7 +112,7 @@ export default function DaoForm({
               value={localDaoState.description}
               onChange={(e) =>
                 localDaoSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -125,13 +124,17 @@ export default function DaoForm({
             <FormLabel>Whitelist Role</FormLabel>
             <div className=" flex gap-4">
               <Select
-                isDisabled={userGuildRoles?.roles?.length! < 1 ? true : false}
+                isDisabled={
+                  userGuildRoles && userGuildRoles?.roles.length < 1
+                    ? true
+                    : false
+                }
                 className="w-[80%]"
                 name="whitelist_role"
                 value={localDaoState.whitelist_role}
                 onChange={(e) =>
                   localDaoSetState((prev) => ({
-                    ...prev!,
+                    ...prev,
                     [e.target.name]: e.target.value,
                   }))
                 }
@@ -170,7 +173,7 @@ export default function DaoForm({
               value={localDaoState.discord}
               onChange={(e) =>
                 localDaoSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -186,7 +189,7 @@ export default function DaoForm({
               value={localDaoState.twitter}
               onChange={(e) =>
                 localDaoSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -202,7 +205,7 @@ export default function DaoForm({
               value={localDaoState.website}
               onChange={(e) =>
                 localDaoSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -217,7 +220,7 @@ export default function DaoForm({
               name="project_logo"
               onChange={(e) =>
                 localDaoSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.files?.[0],
                 }))
               }

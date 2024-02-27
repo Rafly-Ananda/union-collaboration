@@ -7,7 +7,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ProjectForm from "@/app/_components/forms/Project";
 import DaoForm from "@/app/_components/forms/Dao";
-import { InewProjectInput, EmintInfo, InewDaoInput } from "@/app/_interfaces";
+import type { InewProjectInput, InewDaoInput } from "@/app/_interfaces";
+import { EmintInfo } from "@/app/_interfaces";
+
 import { dateFormatter } from "@/app/_utils/dateFormatter";
 import axios from "axios";
 
@@ -27,10 +29,10 @@ export default function EditProject() {
     website: project ? project.website! : "",
     discord: project ? project.discord! : "",
     twitter: project ? project.twitter! : "",
-    mint_info: project ? project?.mint_info! : EmintInfo.PRE,
-    mint_price: project ? project?.mint_price! : 0,
+    mint_info: project ? project?.mint_info : EmintInfo.PRE,
+    mint_price: project ? project?.mint_price : 0,
     mint_date: project
-      ? dateFormatter(project?.mint_date!, "short", "-", true)
+      ? dateFormatter(project?.mint_date, "short", "-", true)
       : "",
     avl_wl_spots: project ? project.avl_wl_spots! : 0,
     whitelist_role: project ? project.whitelist_role! : "default",
@@ -48,13 +50,13 @@ export default function EditProject() {
   const { data: guildRolesOnProject } = api.user.getGuildsRoles.useQuery({
     guild_discord_id:
       userGuilds?.find((e) => e.guild_name === newProject.project_name)
-        ?.guild_id! || "random",
+        ?.guild_id ?? "random",
   });
 
   const { data: guildRolesOnDao } = api.user.getGuildsRoles.useQuery({
     guild_discord_id:
-      userGuilds?.find((e) => e.guild_name === newDao.project_name)
-        ?.guild_id! || "random",
+      userGuilds?.find((e) => e.guild_name === newDao.project_name)?.guild_id ??
+      "random",
   });
 
   const updateProjectorDao = api.project.editProject.useMutation({
@@ -64,8 +66,8 @@ export default function EditProject() {
   });
 
   const uploadPresignedUrlGen = api.s3.createPresignedUrl.useMutation({
-    onSuccess({ url, fields }) {
-      onImageUploadCb(url, fields);
+    onSuccess: async ({ url, fields }) => {
+      await onImageUploadCb(url, fields);
     },
   });
 
@@ -89,9 +91,9 @@ export default function EditProject() {
         updateProjectorDao.mutate({
           project: {
             ...newProject,
-            id: project?.id!,
-            type: project?.type!,
-            logo_url: newProject?.project_logo?.name!,
+            id: project?.id,
+            type: project?.type,
+            logo_url: newProject?.project_logo?.name,
           },
         });
       }
@@ -112,10 +114,10 @@ export default function EditProject() {
         updateProjectorDao.mutate({
           project: {
             ...newDao,
-            id: project?.id!,
-            type: project?.type!,
-            mint_info: project?.mint_info!,
-            logo_url: newDao?.project_logo?.name!,
+            id: project?.id,
+            type: project?.type,
+            mint_info: project?.mint_info,
+            logo_url: newDao?.project_logo?.name,
           },
         });
       }
@@ -125,14 +127,14 @@ export default function EditProject() {
   const onProjectSubmit = async () => {
     if (newProject?.project_logo) {
       uploadPresignedUrlGen.mutate({
-        fileName: newProject?.project_logo?.name!,
+        fileName: newProject?.project_logo?.name,
       });
     } else {
       updateProjectorDao.mutate({
         project: {
           ...newProject,
-          id: project?.id!,
-          type: project?.type!,
+          id: project?.id,
+          type: project?.type,
           logo_url: project?.logo_base_url,
         },
       });
@@ -142,15 +144,15 @@ export default function EditProject() {
   const onSubmitDao = async () => {
     if (newDao?.project_logo) {
       uploadPresignedUrlGen.mutate({
-        fileName: newDao?.project_logo?.name!,
+        fileName: newDao?.project_logo?.name,
       });
     } else {
       updateProjectorDao.mutate({
         project: {
           ...newDao,
-          id: project?.id!,
-          type: project?.type!,
-          mint_info: project?.mint_info!,
+          id: project?.id,
+          type: project?.type,
+          mint_info: project?.mint_info,
           logo_url: project?.logo_base_url,
         },
       });

@@ -14,13 +14,13 @@ import {
   FormHelperText,
 } from "@chakra-ui/react";
 import localFont from "next/font/local";
-import {
+import type {
   IProject,
   InewProjectInput,
   IUserGuilds,
-  EmintInfo,
   IUserGuildRoles,
 } from "@/app/_interfaces";
+import { EmintInfo } from "@/app/_interfaces";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
@@ -68,7 +68,7 @@ export default function ProjectForm({
               value={localProjectState.project_name}
               onChange={(e) =>
                 localProjectSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -99,7 +99,7 @@ export default function ProjectForm({
               value={localProjectState?.description}
               onChange={(e) =>
                 localProjectSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -111,13 +111,17 @@ export default function ProjectForm({
             <FormLabel>Whitelist Role</FormLabel>
             <div className=" flex gap-4">
               <Select
-                isDisabled={userGuildRoles?.roles?.length! < 1 ? true : false}
+                isDisabled={
+                  userGuildRoles && userGuildRoles?.roles.length < 1
+                    ? true
+                    : false
+                }
                 className="w-[80%]"
                 name="whitelist_role"
                 value={localProjectState.whitelist_role}
                 onChange={(e) =>
                   localProjectSetState((prev) => ({
-                    ...prev!,
+                    ...prev,
                     [e.target.name]: e.target.value,
                   }))
                 }
@@ -155,7 +159,7 @@ export default function ProjectForm({
               value={localProjectState?.mint_info}
               onChange={(e) =>
                 localProjectSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   mint_info: e as EmintInfo,
                 }))
               }
@@ -177,7 +181,7 @@ export default function ProjectForm({
               value={localProjectState?.mint_date}
               onChange={(e) =>
                 localProjectSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -192,7 +196,7 @@ export default function ProjectForm({
                 name="mint_price"
                 onChange={(e) =>
                   localProjectSetState((prev) => ({
-                    ...prev!,
+                    ...prev,
                     [e.target.name]: +e.target.value,
                   }))
                 }
@@ -208,7 +212,7 @@ export default function ProjectForm({
                 name="supply"
                 onChange={(e) =>
                   localProjectSetState((prev) => ({
-                    ...prev!,
+                    ...prev,
                     [e.target.name]: +e.target.value,
                   }))
                 }
@@ -224,7 +228,7 @@ export default function ProjectForm({
                 name="avl_wl_spots"
                 onChange={(e) =>
                   localProjectSetState((prev) => ({
-                    ...prev!,
+                    ...prev,
                     [e.target.name]: +e.target.value,
                   }))
                 }
@@ -241,7 +245,7 @@ export default function ProjectForm({
               value={localProjectState.discord}
               onChange={(e) =>
                 localProjectSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -257,7 +261,7 @@ export default function ProjectForm({
               value={localProjectState.twitter}
               onChange={(e) =>
                 localProjectSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -273,7 +277,7 @@ export default function ProjectForm({
               value={localProjectState.website}
               onChange={(e) =>
                 localProjectSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.value,
                 }))
               }
@@ -289,7 +293,7 @@ export default function ProjectForm({
               name="project_logo"
               onChange={(e) =>
                 localProjectSetState((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: e.target.files?.[0],
                 }))
               }

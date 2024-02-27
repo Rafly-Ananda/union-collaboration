@@ -127,10 +127,11 @@ export default function RequestSent() {
               </Tbody>
             </Table>
           </TableContainer>
-          {collabRequest?.projects.length! < 1 && (
+          {collabRequest && collabRequest?.projects.length < 1 && (
             <div className="my-14 flex w-full items-center justify-center">
               <h6 className="flex-none text-base font-light underline">
-                You Project/Dao curently don't have any Incoming Collab Request.
+                You Project/Dao curently don&apos;t have any Incoming Collab
+                Request.
               </h6>
             </div>
           )}

@@ -15,7 +15,7 @@ const s3Client = new S3Client({
   },
 });
 
-export const genPresignedUrl = async (key: string): Promise<string> => {
+export const genPresignedUrl = async (key: string | undefined): Promise<string> => {
   const command = new GetObjectCommand({
     Bucket: env.AWS_BUCKET,
     Key: key,

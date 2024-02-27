@@ -12,8 +12,6 @@ import {
   FaXTwitter,
   FaDiscord,
   FaGlobe,
-  FaXmark,
-  FaCheck,
 } from "react-icons/fa6";
 import { FaStar, FaInfoCircle } from "react-icons/fa";
 import { IoTriangle } from "react-icons/io5";
@@ -25,11 +23,10 @@ import Image from "next/image";
 import { api } from "@/trpc/react";
 import { useState, useEffect } from "react";
 
-import MintTypeBadge from "@/app/_components/badges/MintTypeBadge";
 import WhitelistInputForm from "@/app/_components/forms/WhitelistInput";
 import CollabStatusBadge from "@/app/_components/badges/CollabStatus";
 
-import { InewWhitelistInput } from "@/app/_interfaces";
+import type { InewWhitelistInput } from "@/app/_interfaces";
 
 import notFound from "../../../../../../../../public/assets/not_found.png";
 import contactSupportLogo from "../../../../../../../../public/assets/contact_support_logo.png";
@@ -53,14 +50,14 @@ export default function RequestDetail() {
 
   const { data: targetCollab } = api.project.get.useQuery(
     {
-      projectId: collab?.project_id!,
+      projectId: collab?.project_id,
     },
     { enabled: !!collab },
   );
 
   const applyWhiteList = api.collab.collabAddRole.useMutation({
-    onSuccess() {
-      refetch();
+    onSuccess: async () => {
+      await refetch();
       setWhitelistReq(undefined);
     },
   });
@@ -68,13 +65,13 @@ export default function RequestDetail() {
   const onWishlistFormSubmit = () => {
     // incoming collab payload handler
     const payload = {
-      wl_role: targetCollab?.whitelist_role!,
+      wl_role: targetCollab?.whitelist_role,
       wl_list: whiteListReq?.whitelisted_user
         ?.split(/\r?\n/)
-        .filter((e) => e.length > 1)!,
-      collabReqId: collab?.id!,
-      type: Number(whiteListReq?.whitelist_type!),
-      targetServerDiscId: collab?.guild_id_to!,
+        .filter((e) => e.length > 1),
+      collabReqId: collab?.id,
+      type: Number(whiteListReq?.whitelist_type),
+      targetServerDiscId: collab?.guild_id_to,
     };
 
     applyWhiteList.mutate({ ...payload });

@@ -25,7 +25,7 @@ import Image from "next/image";
 import { api } from "@/trpc/react";
 import { useState, useEffect } from "react";
 
-import { InewWhitelistInput } from "@/app/_interfaces";
+import type { InewWhitelistInput } from "@/app/_interfaces";
 
 import MintTypeBadge from "@/app/_components/badges/MintTypeBadge";
 import WhitelistInputForm from "@/app/_components/forms/WhitelistInput";
@@ -53,20 +53,20 @@ export default function RequestDetail() {
 
   const { data: requester } = api.project.get.useQuery(
     {
-      projectId: collab?.requested_by!,
+      projectId: collab?.requested_by,
     },
     { enabled: !!collab },
   );
 
   const updateCollabStatus = api.collab.updateStatus.useMutation({
-    onSuccess() {
-      refetch();
+    onSuccess: async () => {
+      await refetch();
     },
   });
 
   const applyWhiteList = api.collab.collabAddRole.useMutation({
-    onSuccess() {
-      refetch();
+    onSuccess: async () => {
+      await refetch();
       setWhitelistReq(undefined);
     },
   });
@@ -74,7 +74,7 @@ export default function RequestDetail() {
   const onCollabAgreed = () => {
     // 5 in union db means "Agreed"
     updateCollabStatus.mutate({
-      collabReqId: collab?.id!,
+      collabReqId: collab?.id,
       status: 5,
     });
   };
@@ -82,7 +82,7 @@ export default function RequestDetail() {
   const onCollabReject = () => {
     // 3 in union db means "Rejected"
     updateCollabStatus.mutate({
-      collabReqId: collab?.id!,
+      collabReqId: collab?.id,
       status: 3,
     });
   };
@@ -90,13 +90,13 @@ export default function RequestDetail() {
   const onWishlistFormSubmit = () => {
     // incoming collab payload handler
     const payload = {
-      wl_role: requester?.whitelist_role!,
+      wl_role: requester?.whitelist_role,
       wl_list: whiteListReq?.whitelisted_user
         ?.split(/\r?\n/)
-        .filter((e) => e.length > 1)!,
-      collabReqId: collab?.id!,
-      type: Number(whiteListReq?.whitelist_type!),
-      targetServerDiscId: collab?.guild_id_from!,
+        .filter((e) => e.length > 1),
+      collabReqId: collab?.id,
+      type: Number(whiteListReq?.whitelist_type),
+      targetServerDiscId: collab?.guild_id_from,
     };
 
     applyWhiteList.mutate({ ...payload });
@@ -294,7 +294,7 @@ export default function RequestDetail() {
         <div className="h-full flex-none rounded-md bg-white">
           <div className="skeleton relative h-60 w-72  rounded-none rounded-t-md">
             <Image
-              src={requester?.logo_url! ?? notFound}
+              src={requester?.logo_url ?? notFound}
               width={300}
               height={300}
               alt="project logo"
@@ -310,7 +310,7 @@ export default function RequestDetail() {
               <h1 className="text-center font-bold">
                 {collab?.collab_req_from}
               </h1>
-              <MintTypeBadge badgeType={requester?.mint_info!} />
+              <MintTypeBadge badgeType={requester?.mint_info} />
               <Link href={`/home/playground/project/${collab?.requested_by}`}>
                 <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#3182CE] p-2 text-sm font-semibold text-[#3182CE] hover:bg-[#3182CE] hover:text-white">
                   Details

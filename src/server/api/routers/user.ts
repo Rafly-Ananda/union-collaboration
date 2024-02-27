@@ -6,16 +6,37 @@ import {
   VerifiedLinksResponseValidator,
   DiscordGuildRolesResponseValidator,
 } from "@/server/validator/index";
+import type {
+  UserOwnDiscordGuild,
+  DiscordGuildRoles,
+  VerifiedLinks,
+} from "@/server/validator/index";
 import { SERVER_CONFIG } from "@/server/_config/config";
+
+interface IUserData {
+  user: UserOwnDiscordGuild[] | DiscordGuildRoles[];
+  verifiedLinks: VerifiedLinks[];
+}
+
+interface ISingleVerifiedLink {
+  verifiedLinks: {
+    results: VerifiedLinks;
+  };
+}
+
+interface fetchResponse<T> {
+  message: string;
+  data: T;
+}
 
 export const userRouter = createTRPCRouter({
   getGuilds: protectedProcedure.query(async ({ ctx, input }) => {
     try {
-      const r = await (
+      const r = (await (
         await fetch(
           `${SERVER_CONFIG.EXTERNAL_API_URL}/user/user-guild?user_id=${ctx.session.user.extras.id}`,
         )
-      ).json();
+      ).json()) as fetchResponse<IUserData>;
       if (r.message !== "OK") {
         throw new TRPCError({
           message: "Failed fetching user guilds",
@@ -49,11 +70,11 @@ export const userRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { guild_discord_id } = input;
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/discord-bot/server/${guild_discord_id}/roles`,
           )
-        ).json();
+        ).json()) as fetchResponse<IUserData>;
         if (r.message !== "OK") {
           throw new TRPCError({
             message: "Failed fetching guild roles",
@@ -96,11 +117,11 @@ export const userRouter = createTRPCRouter({
       const { page, pageSize, externalUserId } = input;
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/user/${externalUserId}/verified-links?page=${page}&page_size=${pageSize}`,
           )
-        ).json();
+        ).json()) as fetchResponse<IUserData>;
 
         if (r.message !== "OK") {
           throw new TRPCError({
@@ -123,8 +144,8 @@ export const userRouter = createTRPCRouter({
 
         return {
           data: [...vRes.data],
-          totalPage: r.data.verifiedLinks.totalPage,
-          total: r.data.verifiedLinks.total,
+          // totalPage: r.data.verifiedLinks.totalPage,
+          // total: r.data.verifiedLinks.total,
         };
       } catch (e) {
         if (e instanceof Error) {
@@ -148,9 +169,9 @@ export const userRouter = createTRPCRouter({
       const { url } = input;
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(`${SERVER_CONFIG.EXTERNAL_API_URL}/verified-links/${url}`)
-        ).json();
+        ).json()) as fetchResponse<ISingleVerifiedLink>;
 
         if (r.message !== "OK") {
           throw new TRPCError({
@@ -173,8 +194,8 @@ export const userRouter = createTRPCRouter({
 
         return {
           data: [...vRes.data],
-          totalPage: r.data.verifiedLinks.totalPage,
-          total: r.data.verifiedLinks.total,
+          // totalPage: r.data.verifiedLinks.totalPage,
+          // total: r.data.verifiedLinks.total,
         };
       } catch (e) {
         if (e instanceof Error) {
@@ -200,7 +221,7 @@ export const userRouter = createTRPCRouter({
       const payload = { url, created_by: externalUserId };
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(`${SERVER_CONFIG.EXTERNAL_API_URL}/user/verified-links`, {
             method: "POST",
             headers: {
@@ -208,7 +229,7 @@ export const userRouter = createTRPCRouter({
             },
             body: JSON.stringify({ ...payload }),
           })
-        ).json();
+        ).json()) as unknown;
 
         return r;
       } catch (e) {

@@ -2,7 +2,7 @@ import type { MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Project } from "@/server/validator";
+import type { Project } from "@/server/validator";
 import { dateFormatter } from "@/app/_utils/dateFormatter";
 import notFound from "../../../../public/assets/not_found.png";
 
@@ -33,7 +33,7 @@ export default function VerticalShowcaseCard({
         onClick={onCardClick}
       >
         <Image
-          src={isImageError ? notFound : project?.logo_url!}
+          src={isImageError ? notFound : project?.logo_url}
           width={300}
           height={300}
           alt="project logo"
@@ -69,7 +69,7 @@ export default function VerticalShowcaseCard({
               {/* Mint Date */}
               <div className="flex w-full items-center justify-between">
                 <p>Mint Date</p>
-                <span>{dateFormatter(project?.mint_date!)}</span>
+                <span>{dateFormatter(project?.mint_date)}</span>
               </div>
             </div>
           )}
@@ -80,7 +80,7 @@ export default function VerticalShowcaseCard({
           </p> */}
           <div className="mt-4 flex items-center justify-center">
             <button
-              className={`rounded-md bg-black p-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:scale-105 ${project.status === "closed" && 'bg-gray-400'}`}
+              className={`rounded-md bg-black p-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:scale-105 ${project.status === "closed" && "bg-gray-400"}`}
               onClick={onCollabsClick}
               disabled={project.status === "closed" && true}
             >

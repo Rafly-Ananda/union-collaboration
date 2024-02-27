@@ -8,8 +8,7 @@ import {
   Radio,
 } from "@chakra-ui/react";
 import type { InewWhitelistInput, EWhitelistType } from "@/app/_interfaces";
-
-import { IProject, ICollaborationRequest } from "@/app/_interfaces";
+import type { IProject, ICollaborationRequest } from "@/app/_interfaces";
 
 export default function WhitelistInputForm({
   requester,

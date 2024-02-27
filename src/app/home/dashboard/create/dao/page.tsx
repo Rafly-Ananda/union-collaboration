@@ -22,19 +22,20 @@ export default function CreateDao() {
 
   const { data: guildRoles } = api.user.getGuildsRoles.useQuery({
     guild_discord_id:
-      userGuilds?.find((e) => e.guild_name === newDao.project_name)
-        ?.guild_id! || "random",
+      userGuilds?.find((e) => e.guild_name === newDao.project_name)?.guild_id ??
+      "random",
   });
 
   const createDao = api.project.create.useMutation({
     onSuccess: ({ data }) => {
-      router.push(`/home/dashboard/your-creation/${data?.project?.id}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      router.push(`/home/dashboard/your-creation/${data.project.id}`);
     },
   });
 
   const uploadPresignedUrlGen = api.s3.createPresignedUrl.useMutation({
-    onSuccess({ url, fields }) {
-      onImageUploadCb(url, fields);
+    onSuccess: async ({ url, fields }) => {
+      await onImageUploadCb(url, fields);
     },
   });
 
@@ -61,7 +62,7 @@ export default function CreateDao() {
           guild_id: userGuilds?.find(
             (e) => e.guild_name === newDao.project_name,
           )?.guild_id,
-          logo_url: newDao?.project_logo?.name!,
+          logo_url: newDao?.project_logo?.name,
         },
       });
     }
@@ -69,7 +70,7 @@ export default function CreateDao() {
 
   const onDaoSubmit = async () => {
     uploadPresignedUrlGen.mutate({
-      fileName: newDao?.project_logo?.name!,
+      fileName: newDao?.project_logo?.name,
     });
   };
 

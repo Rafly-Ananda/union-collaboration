@@ -6,6 +6,21 @@ import { projectResponseValidator } from "@/server/validator/index";
 import { SERVER_CONFIG } from "@/server/_config/config";
 import { genPresignedUrl } from "@/server/_utils/s3/main";
 
+import type { Project } from "@/server/validator/index";
+
+interface IProject {
+  projects: {
+    results: Project | Project[];
+    totalPage: number
+    total: number
+  };
+}
+
+interface fetchResponse<T> {
+  message: string;
+  data: T;
+}
+
 export const projectRouter = createTRPCRouter({
   get: protectedProcedure
     .input(
@@ -17,11 +32,11 @@ export const projectRouter = createTRPCRouter({
       const { projectId } = input;
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project?id=${projectId}`,
           )
-        ).json();
+        ).json()) as fetchResponse<IProject>;
 
         if (r.message !== "OK") {
           throw new TRPCError({
@@ -41,12 +56,12 @@ export const projectRouter = createTRPCRouter({
           });
         }
 
-        const imageUrl = await genPresignedUrl(vRes.data.at(0)?.logo_url!);
+        const imageUrl = await genPresignedUrl(vRes.data.at(0)?.logo_url);
 
         return {
           ...vRes.data.at(0),
           logo_url: imageUrl,
-          logo_base_url: vRes.data.at(0)?.logo_url!
+          logo_base_url: vRes.data.at(0)?.logo_url,
         };
       } catch (e) {
         if (e instanceof Error) {
@@ -77,7 +92,9 @@ export const projectRouter = createTRPCRouter({
         : fetchUrl;
 
       try {
-        const r = await (await fetch(`${fetchUrl}`)).json();
+        const r = (await (
+          await fetch(`${fetchUrl}`)
+        ).json()) as fetchResponse<IProject>;
 
         if (r.message !== "OK") {
           throw new TRPCError({
@@ -100,7 +117,7 @@ export const projectRouter = createTRPCRouter({
 
         const enrichedWithImg = await Promise.all(
           vRes.data.map(async (e) => {
-            const imageUrl = await genPresignedUrl(e?.logo_url!);
+            const imageUrl = await genPresignedUrl(e?.logo_url);
             return { ...e, logo_url: imageUrl };
           }),
         );
@@ -137,7 +154,7 @@ export const projectRouter = createTRPCRouter({
       };
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(`${SERVER_CONFIG.EXTERNAL_API_URL}/union/project`, {
             method: "POST",
             headers: {
@@ -145,7 +162,7 @@ export const projectRouter = createTRPCRouter({
             },
             body: JSON.stringify({ ...payload }),
           })
-        ).json();
+        ).json()) as unknown;
         return r;
       } catch (e) {
         if (e instanceof Error) {
@@ -162,7 +179,7 @@ export const projectRouter = createTRPCRouter({
       const { projectId, status } = input;
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project/${projectId}/status`,
             {
@@ -173,7 +190,7 @@ export const projectRouter = createTRPCRouter({
               body: JSON.stringify({ status }),
             },
           )
-        ).json();
+        ).json()) as unknown;
 
         return r;
       } catch (e) {
@@ -191,7 +208,7 @@ export const projectRouter = createTRPCRouter({
       const { project } = input;
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project/${project.id}`,
             {
@@ -202,7 +219,7 @@ export const projectRouter = createTRPCRouter({
               body: JSON.stringify({ ...project }),
             },
           )
-        ).json();
+        ).json()) as unknown;
 
         return r;
       } catch (e) {

@@ -2,11 +2,21 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { CollabInputValidator } from "@/server/validator/collab";
+import type { CollabRequest } from "@/server/validator/index";
 import {
   CollabRequestResponseValidator,
   SingleCollabReqResponseValidator,
 } from "@/server/validator/index";
 import { SERVER_CONFIG } from "@/server/_config/config";
+
+interface ICollabRequestType {
+  collaborationRequests: CollabRequest[];
+}
+
+interface fetchResponse<T> {
+  message: string;
+  data: T;
+}
 
 export const collabRouter = createTRPCRouter({
   getAllIncoming: protectedProcedure
@@ -14,11 +24,11 @@ export const collabRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { projectId, limit } = input;
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request?project_id=${projectId}&limit=${limit}`,
           )
-        ).json();
+        ).json()) as fetchResponse<ICollabRequestType>;
 
         if (r.message !== "OK") {
           throw new TRPCError({
@@ -57,11 +67,11 @@ export const collabRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { projectId } = input;
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request?id=${projectId}`,
           )
-        ).json();
+        ).json()) as fetchResponse<ICollabRequestType>;
 
         if (r.message !== "OK") {
           throw new TRPCError({
@@ -98,11 +108,11 @@ export const collabRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { requestedBy, limit } = input;
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request?requested_by=${requestedBy}&limit=${limit}`,
           )
-        ).json();
+        ).json()) as fetchResponse<ICollabRequestType>;
 
         if (r.message !== "OK") {
           throw new TRPCError({
@@ -158,7 +168,7 @@ export const collabRouter = createTRPCRouter({
       };
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/discord-bot/server/${targetServerDiscId}/roles/whitelists`,
             {
@@ -169,7 +179,7 @@ export const collabRouter = createTRPCRouter({
               body: JSON.stringify({ ...payload }),
             },
           )
-        ).json();
+        ).json()) as unknown;
 
         return r;
       } catch (e) {
@@ -187,7 +197,7 @@ export const collabRouter = createTRPCRouter({
       const { collabReq } = input;
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request`,
             {
@@ -198,7 +208,7 @@ export const collabRouter = createTRPCRouter({
               body: JSON.stringify({ ...collabReq }),
             },
           )
-        ).json();
+        ).json()) as unknown;
 
         return r;
       } catch (e) {
@@ -220,7 +230,7 @@ export const collabRouter = createTRPCRouter({
       };
 
       try {
-        const r = await (
+        const r = (await (
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/collaboration-request/${collabReqId}/status`,
             {
@@ -231,7 +241,7 @@ export const collabRouter = createTRPCRouter({
               body: JSON.stringify({ ...payload }),
             },
           )
-        ).json();
+        ).json()) as unknown;
 
         return r;
       } catch (e) {

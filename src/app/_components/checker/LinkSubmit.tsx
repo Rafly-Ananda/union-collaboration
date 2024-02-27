@@ -18,7 +18,6 @@ import { usePathname } from "next/navigation";
 import { AddIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import HowThisWorksModal from "@/app/_components/modals/HowThisWorks";
-import { VerifiedLinks } from "@/server/validator";
 import VerifiedLinkStatusBadge from "@/app/_components/badges/VerifiedLinksStatus";
 import { api } from "@/trpc/react";
 import { useSession } from "next-auth/react";
@@ -39,9 +38,9 @@ export default function LinkSubmit() {
   });
 
   const submitLink = api.user.createVerifiedLink.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       setNewLink("");
-      refetch();
+      await refetch();
     },
   });
 
@@ -90,11 +89,11 @@ export default function LinkSubmit() {
         </button>
       </div>
 
-      {links?.data.length! < 1 ? (
+      {links?.data.length < 1 ? (
         <>
           <div className="mt-5 flex items-center justify-center">
             <h6 className="flex-none text-base font-light underline">
-              You curently don't have any verified links, submit them here!
+              You curently don&apos;t have any verified links, submit them here!
             </h6>
           </div>
         </>

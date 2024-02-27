@@ -3,20 +3,24 @@ import {
   userDiscordResponseValidator,
   DiscordGuildResponseValidator,
 } from "../validator";
-import type { TrimmedUserDiscord, UserDiscordGuild } from "../validator";
+import type {
+  TrimmedUserDiscord,
+  UserDiscordGuild,
+  UserDiscord,
+} from "../validator";
 
 export const getUserDetails = async (
   token: string,
 ): Promise<TrimmedUserDiscord> => {
   try {
-    const r = await (
+    const r = (await (
       await fetch(`${SERVER_CONFIG.DISCORD_API_URL}/users/@me`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       })
-    ).json();
+    ).json()) as UserDiscord;
 
     const vRes = userDiscordResponseValidator.safeParse(r);
     if (!vRes.success) {
@@ -44,14 +48,14 @@ export const getUserGuildDetails = async (
   token: string,
 ): Promise<UserDiscordGuild[]> => {
   try {
-    const r = await (
+    const r = (await (
       await fetch(`${SERVER_CONFIG.DISCORD_API_URL}/users/@me/guilds`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       })
-    ).json();
+    ).json()) as UserDiscordGuild[];
 
     const vRes = DiscordGuildResponseValidator.safeParse(r.at(0));
     if (!vRes.success) {

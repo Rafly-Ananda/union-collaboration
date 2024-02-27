@@ -2,7 +2,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/trpc/react";
-import { InewProjectInput, EmintInfo } from "@/app/_interfaces";
+import { EmintInfo } from "@/app/_interfaces";
+import type { InewProjectInput } from "@/app/_interfaces";
+
 import ProjectForm from "@/app/_components/forms/Project";
 import axios from "axios";
 
@@ -27,18 +29,19 @@ export default function CreateProject() {
   const { data: guildRoles } = api.user.getGuildsRoles.useQuery({
     guild_discord_id:
       userGuilds?.find((e) => e.guild_name === newProject.project_name)
-        ?.guild_id! || "random",
+        ?.guild_id ?? "random",
   });
 
   const createProject = api.project.create.useMutation({
     onSuccess: ({ data }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       router.push(`/home/dashboard/your-creation/${data?.project?.id}`);
     },
   });
 
   const uploadPresignedUrlGen = api.s3.createPresignedUrl.useMutation({
-    onSuccess({ url, fields }) {
-      onImageUploadCb(url, fields);
+    onSuccess: async ({ url, fields }) => {
+      await onImageUploadCb(url, fields);
     },
   });
 
@@ -64,7 +67,7 @@ export default function CreateProject() {
           guild_id: userGuilds?.find(
             (e) => e.guild_name === newProject.project_name,
           )?.guild_id,
-          logo_url: newProject?.project_logo?.name!,
+          logo_url: newProject?.project_logo?.name,
         },
       });
     }
@@ -72,7 +75,7 @@ export default function CreateProject() {
 
   const onProjectSubmit = async () => {
     uploadPresignedUrlGen.mutate({
-      fileName: newProject?.project_logo?.name!,
+      fileName: newProject?.project_logo?.name,
     });
   };
 

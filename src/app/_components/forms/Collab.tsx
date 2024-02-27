@@ -23,7 +23,6 @@ export default function CollaborationRequestForm({
   ownProjects: IProject[] | undefined;
 }) {
   const pathName = usePathname();
-  const [representedAs, setRepresentedAs] = useState<string>("");
   const projectId = pathName.split("/").at(-2);
   const router = useRouter();
   const [newCollaboration, setNewCollaboration] =
@@ -49,7 +48,7 @@ export default function CollaborationRequestForm({
   const onCollaborationRequestSubmit = async () => {
     const payload = {
       ...newCollaboration,
-      collaboration_type: +newCollaboration?.collaboration_type!,
+      collaboration_type: +newCollaboration?.collaboration_type,
       project_id: projectId!,
     };
 
@@ -66,10 +65,10 @@ export default function CollaborationRequestForm({
           <FormLabel>Mint Info</FormLabel>
           <RadioGroup
             name="collaboration_type"
-            value={newCollaboration?.collaboration_type as string as string}
+            value={newCollaboration?.collaboration_type as string}
             onChange={(e: string) =>
               setNewCollaboration((prev) => ({
-                ...prev!,
+                ...prev,
                 collaboration_type: e,
               }))
             }
@@ -90,16 +89,15 @@ export default function CollaborationRequestForm({
             value={newCollaboration?.requested_by}
             onChange={(e) => {
               setNewCollaboration((prev) => ({
-                ...prev!,
+                ...prev,
                 [e.target.name]: e.target.value,
               }));
-              setRepresentedAs(e.target.value);
             }}
           >
             <option hidden disabled value="default">
               Select ...
             </option>
-            {ownProjects?.map((e, i) => (
+            {ownProjects?.map((e) => (
               <option value={e.id} key={e.id}>
                 {e.project_name}
               </option>
@@ -116,7 +114,7 @@ export default function CollaborationRequestForm({
               value={newCollaboration?.wl_spot_amt ?? 0}
               onChange={(e) =>
                 setNewCollaboration((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: +e.target.value,
                 }))
               }
@@ -133,7 +131,7 @@ export default function CollaborationRequestForm({
               value={newCollaboration?.wl_team_amt ?? 0}
               onChange={(e) =>
                 setNewCollaboration((prev) => ({
-                  ...prev!,
+                  ...prev,
                   [e.target.name]: +e.target.value,
                 }))
               }
@@ -150,7 +148,7 @@ export default function CollaborationRequestForm({
             value={newCollaboration?.method ?? ""}
             onChange={(e) =>
               setNewCollaboration((prev) => ({
-                ...prev!,
+                ...prev,
                 [e.target.name]: e.target.value,
               }))
             }
@@ -166,7 +164,7 @@ export default function CollaborationRequestForm({
             value={newCollaboration?.note ?? ""}
             onChange={(e) =>
               setNewCollaboration((prev) => ({
-                ...prev!,
+                ...prev,
                 [e.target.name]: e.target.value,
               }))
             }

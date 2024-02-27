@@ -30,8 +30,8 @@ export default function ProjectViewer() {
   });
 
   const updateProjectStatus = api.project.editProjectStatus.useMutation({
-    onSuccess: () => {
-      refetch();
+    onSuccess: async () => {
+      await refetch();
     },
   });
 
@@ -114,7 +114,7 @@ export default function ProjectViewer() {
         <div className="h-full w-60 rounded-md bg-white">
           <div className="skeleton relative h-48 w-full rounded-none rounded-t-md">
             <Image
-              src={isImageError ? notFound : data?.logo_url!}
+              src={isImageError ? notFound : data?.logo_url}
               width={300}
               height={300}
               alt="project logo"
@@ -174,7 +174,7 @@ export default function ProjectViewer() {
                 <Image src={mintDateIcon} alt="xoxo" className="w-6" />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
                   <span className="text-[#C2C2C2]">
-                    {dateFormatter(data?.mint_date!, "long")}
+                    {dateFormatter(data?.mint_date, "long")}
                   </span>
                   <span>Mint Date</span>
                 </div>

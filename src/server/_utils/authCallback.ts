@@ -6,12 +6,18 @@ import type {
 } from "../validator";
 import { UserExternalResponseValidator } from "../validator";
 
+interface onDiscordCallback {
+  data: {
+    user: UserExternal;
+  };
+}
+
 export const onAuthCallback = async (
   user: TrimmedUserDiscord,
   guilds: UserDiscordGuild[],
 ): Promise<UserExternal> => {
   try {
-    const r = await (
+    const r = (await (
       await fetch(`${SERVER_CONFIG.EXTERNAL_API_URL}/auth/discord/callback`, {
         method: "POST",
         headers: {
@@ -19,7 +25,7 @@ export const onAuthCallback = async (
         },
         body: JSON.stringify({ user, guilds }),
       })
-    ).json();
+    ).json()) as onDiscordCallback;
 
     const vRes = UserExternalResponseValidator.safeParse(r.data.user);
 
