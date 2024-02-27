@@ -73,18 +73,22 @@ export default function RequestDetail() {
 
   const onCollabAgreed = () => {
     // 5 in union db means "Agreed"
-    updateCollabStatus.mutate({
-      collabReqId: collab?.id,
-      status: 5,
-    });
+    if (collab) {
+      updateCollabStatus.mutate({
+        collabReqId: collab?.id,
+        status: 5,
+      });
+    }
   };
 
   const onCollabReject = () => {
     // 3 in union db means "Rejected"
-    updateCollabStatus.mutate({
-      collabReqId: collab?.id,
-      status: 3,
-    });
+    if (collab) {
+      updateCollabStatus.mutate({
+        collabReqId: collab?.id,
+        status: 3,
+      });
+    }
   };
 
   const onWishlistFormSubmit = () => {

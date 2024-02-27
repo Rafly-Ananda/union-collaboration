@@ -33,7 +33,7 @@ export const projectRouter = createTRPCRouter({
   get: protectedProcedure
     .input(
       z.object({
-        projectId: z.string(),
+        projectId: z.string().optional(),
       }),
     )
     .query(async ({ input }) => {

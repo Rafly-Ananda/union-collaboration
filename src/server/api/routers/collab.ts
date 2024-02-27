@@ -149,11 +149,11 @@ export const collabRouter = createTRPCRouter({
   collabAddRole: protectedProcedure
     .input(
       z.object({
-        wl_role: z.string(),
-        wl_list: z.array(z.string()),
-        collabReqId: z.string(),
-        type: z.number(),
-        targetServerDiscId: z.string(),
+        wl_role: z.string().optional(),
+        wl_list: z.array(z.string()).optional(),
+        collabReqId: z.string().optional(),
+        type: z.number().optional(),
+        targetServerDiscId: z.string().optional(),
       }),
     )
     .mutation(async ({ input }) => {
