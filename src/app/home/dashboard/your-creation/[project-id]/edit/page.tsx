@@ -111,15 +111,17 @@ export default function EditProject() {
 
         await axios.post(url, formData);
 
-        updateProjectorDao.mutate({
-          project: {
-            ...newDao,
-            id: project?.id,
-            type: project?.type,
-            mint_info: project?.mint_info,
-            logo_url: newDao?.project_logo?.name,
-          },
-        });
+        if (project?.type) {
+          updateProjectorDao.mutate({
+            project: {
+              ...newDao,
+              id: project?.id,
+              type: project?.type,
+              mint_info: project?.mint_info,
+              logo_url: newDao?.project_logo?.name,
+            },
+          });
+        }
       }
     }
   };
@@ -130,14 +132,16 @@ export default function EditProject() {
         fileName: newProject?.project_logo?.name,
       });
     } else {
-      updateProjectorDao.mutate({
-        project: {
-          ...newProject,
-          id: project?.id,
-          type: project?.type,
-          logo_url: project?.logo_base_url,
-        },
-      });
+      if (project?.type) {
+        updateProjectorDao.mutate({
+          project: {
+            ...newProject,
+            id: project?.id,
+            type: project?.type,
+            logo_url: project?.logo_base_url,
+          },
+        });
+      }
     }
   };
 
@@ -147,15 +151,17 @@ export default function EditProject() {
         fileName: newDao?.project_logo?.name,
       });
     } else {
-      updateProjectorDao.mutate({
-        project: {
-          ...newDao,
-          id: project?.id,
-          type: project?.type,
-          mint_info: project?.mint_info,
-          logo_url: project?.logo_base_url,
-        },
-      });
+      if (project?.type) {
+        updateProjectorDao.mutate({
+          project: {
+            ...newDao,
+            id: project?.id,
+            type: project?.type,
+            mint_info: project?.mint_info,
+            logo_url: project?.logo_base_url,
+          },
+        });
+      }
     }
   };
 

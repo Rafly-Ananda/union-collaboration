@@ -11,9 +11,17 @@ import type { Project } from "@/server/validator/index";
 interface IProject {
   projects: {
     results: Project | Project[];
-    totalPage: number
-    total: number
+    totalPage: number;
+    total: number;
   };
+}
+
+interface IPostProject {
+  project: Project;
+}
+
+interface postResponse<T> {
+  data: T;
 }
 
 interface fetchResponse<T> {
@@ -162,7 +170,8 @@ export const projectRouter = createTRPCRouter({
             },
             body: JSON.stringify({ ...payload }),
           })
-        ).json()) as unknown;
+        ).json()) as postResponse<IPostProject>;
+
         return r;
       } catch (e) {
         if (e instanceof Error) {

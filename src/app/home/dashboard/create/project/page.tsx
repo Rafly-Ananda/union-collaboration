@@ -74,9 +74,13 @@ export default function CreateProject() {
   };
 
   const onProjectSubmit = async () => {
-    uploadPresignedUrlGen.mutate({
-      fileName: newProject?.project_logo?.name,
-    });
+    if (newProject) {
+      if (newProject.project_logo) {
+        uploadPresignedUrlGen.mutate({
+          fileName: newProject?.project_logo?.name,
+        });
+      }
+    }
   };
 
   return (

@@ -89,7 +89,7 @@ export default function LinkSubmit() {
         </button>
       </div>
 
-      {links?.data.length < 1 ? (
+      {links && links?.data.length < 1 ? (
         <>
           <div className="mt-5 flex items-center justify-center">
             <h6 className="flex-none text-base font-light underline">

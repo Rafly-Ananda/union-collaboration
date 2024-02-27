@@ -13,8 +13,8 @@ export interface InewProjectInput {
   website: string;
   discord: string;
   twitter: string;
-  mint_info: EmintInfo;
-  mint_price: number;
+  mint_info: EmintInfo | undefined;
+  mint_price: number | undefined;
   avl_wl_spots: number;
   logo_url?: string;
   whitelist_role: string;

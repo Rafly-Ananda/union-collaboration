@@ -69,9 +69,13 @@ export default function CreateDao() {
   };
 
   const onDaoSubmit = async () => {
-    uploadPresignedUrlGen.mutate({
-      fileName: newDao?.project_logo?.name,
-    });
+    if (newDao) {
+      if (newDao.project_logo) {
+        uploadPresignedUrlGen.mutate({
+          fileName: newDao?.project_logo?.name,
+        });
+      }
+    }
   };
 
   return (
