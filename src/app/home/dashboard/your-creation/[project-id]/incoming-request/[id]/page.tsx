@@ -51,9 +51,12 @@ export default function RequestDetail() {
     projectId: collabRequestId!,
   });
 
-  const { data: requester } = api.project.get.useQuery({
-    projectId: collab?.requested_by!,
-  });
+  const { data: requester } = api.project.get.useQuery(
+    {
+      projectId: collab?.requested_by!,
+    },
+    { enabled: !!collab },
+  );
 
   const updateCollabStatus = api.collab.updateStatus.useMutation({
     onSuccess() {
@@ -63,7 +66,8 @@ export default function RequestDetail() {
 
   const applyWhiteList = api.collab.collabAddRole.useMutation({
     onSuccess() {
-      console.log("success");
+      refetch();
+      setWhitelistReq(undefined);
     },
   });
 
@@ -87,13 +91,13 @@ export default function RequestDetail() {
     // incoming collab payload handler
     const payload = {
       wl_role: requester?.whitelist_role!,
-      wl_list: [whiteListReq?.whitelisted_user!],
+      wl_list: whiteListReq?.whitelisted_user
+        ?.split(/\r?\n/)
+        .filter((e) => e.length > 1)!,
       collabReqId: collab?.id!,
       type: Number(whiteListReq?.whitelist_type!),
       targetServerDiscId: collab?.guild_id_from!,
     };
-
-    console.log(payload);
 
     applyWhiteList.mutate({ ...payload });
   };
@@ -290,7 +294,7 @@ export default function RequestDetail() {
         <div className="h-full flex-none rounded-md bg-white">
           <div className="skeleton relative h-60 w-72  rounded-none rounded-t-md">
             <Image
-              src={isImageError ? notFound : requester?.logo_url!}
+              src={requester?.logo_url! ?? notFound}
               width={300}
               height={300}
               alt="project logo"

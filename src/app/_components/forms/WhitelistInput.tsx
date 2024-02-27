@@ -131,8 +131,8 @@ export default function WhitelistInputForm({
                     }
                   >
                     <div className="flex items-center justify-start gap-20">
-                      <Radio value="general-wl">General Whitelist</Radio>
-                      <Radio value="team-wl">Team Whitelist</Radio>
+                      <Radio value="1">General Whitelist</Radio>
+                      <Radio value="2">Team Whitelist</Radio>
                     </div>
                   </RadioGroup>
                 </FormControl>

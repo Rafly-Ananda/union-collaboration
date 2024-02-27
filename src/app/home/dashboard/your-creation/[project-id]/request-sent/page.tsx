@@ -107,7 +107,7 @@ export default function RequestSent() {
               <Tbody>
                 {isFetched &&
                   collabRequest?.projects.map((e, i) => (
-                    <Tr>
+                    <Tr key={e.id}>
                       <Td>
                         <Link href={`${pathName}/${e.id}`}>
                           <button className="rounded-lg border border-[#DD6B20] px-5 py-2 font-semibold text-[#DD6B20] hover:bg-[#DD6B20] hover:text-white">

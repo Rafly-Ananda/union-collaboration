@@ -110,6 +110,56 @@ export const userRouter = createTRPCRouter({
         }
 
         const vRes = VerifiedLinksResponseValidator.safeParse(
+          r.data.verifiedLinks,
+        );
+
+        if (!vRes.success) {
+          throw new TRPCError({
+            message: "Failed z validating all verified links",
+            code: "PARSE_ERROR",
+            cause: vRes.error,
+          });
+        }
+
+        return {
+          data: [...vRes.data],
+          totalPage: r.data.verifiedLinks.totalPage,
+          total: r.data.verifiedLinks.total,
+        };
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new TRPCError({
+            message: "Failed fetching all verified links",
+            code: "INTERNAL_SERVER_ERROR",
+            cause: e.message,
+          });
+        }
+      }
+    }),
+
+  getSingleVerifiedLink: protectedProcedure
+    .input(
+      z.object({
+        url: z.string(),
+        externalUserId: z.string().optional(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const { url } = input;
+
+      try {
+        const r = await (
+          await fetch(`${SERVER_CONFIG.EXTERNAL_API_URL}/verified-links/${url}`)
+        ).json();
+
+        if (r.message !== "OK") {
+          throw new TRPCError({
+            message: "Failed fetching all verified links",
+            code: "PARSE_ERROR",
+          });
+        }
+
+        const vRes = VerifiedLinksResponseValidator.safeParse(
           r.data.verifiedLinks.results,
         );
 

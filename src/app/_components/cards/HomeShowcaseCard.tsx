@@ -33,7 +33,7 @@ export default function VerticalShowcaseCard({
         onClick={onCardClick}
       >
         <Image
-          src={isImageError ? notFound : project.logo_url}
+          src={isImageError ? notFound : project?.logo_url!}
           width={300}
           height={300}
           alt="project logo"
@@ -80,8 +80,9 @@ export default function VerticalShowcaseCard({
           </p> */}
           <div className="mt-4 flex items-center justify-center">
             <button
-              className="rounded-md bg-black p-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:scale-105"
+              className={`rounded-md bg-black p-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:scale-105 ${project.status === "closed" && 'bg-gray-400'}`}
               onClick={onCollabsClick}
+              disabled={project.status === "closed" && true}
             >
               Open Collabs
             </button>

@@ -47,33 +47,37 @@ export default function RequestDetail() {
     projectId: projectId!,
   });
 
-  const { data: collab } = api.collab.getSingle.useQuery({
+  const { data: collab, refetch } = api.collab.getSingle.useQuery({
     projectId: collabRequestId!,
   });
 
-  const { data: targetCollab } = api.project.get.useQuery({
-    projectId: collab?.project_id!,
-  });
+  const { data: targetCollab } = api.project.get.useQuery(
+    {
+      projectId: collab?.project_id!,
+    },
+    { enabled: !!collab },
+  );
 
   const applyWhiteList = api.collab.collabAddRole.useMutation({
     onSuccess() {
-      console.log("success");
+      refetch();
+      setWhitelistReq(undefined);
     },
   });
 
   const onWishlistFormSubmit = () => {
     // incoming collab payload handler
     const payload = {
-      // wl_role: requester?.whitelist_role!,
-      wl_list: [whiteListReq?.whitelisted_user!],
+      wl_role: targetCollab?.whitelist_role!,
+      wl_list: whiteListReq?.whitelisted_user
+        ?.split(/\r?\n/)
+        .filter((e) => e.length > 1)!,
       collabReqId: collab?.id!,
       type: Number(whiteListReq?.whitelist_type!),
-      targetServerDiscId: collab?.guild_id_from!,
+      targetServerDiscId: collab?.guild_id_to!,
     };
 
-    console.log(payload);
-
-    // applyWhiteList.mutate({ ...payload });
+    applyWhiteList.mutate({ ...payload });
   };
 
   useEffect(() => {
@@ -221,7 +225,7 @@ export default function RequestDetail() {
         <div className="h-full flex-none rounded-md bg-white">
           <div className="skeleton relative h-60 w-72  rounded-none rounded-t-md">
             <Image
-              src={isImageError ? notFound : targetCollab?.logo_url!}
+              src={targetCollab?.logo_url ?? notFound}
               width={300}
               height={300}
               alt="project logo"
