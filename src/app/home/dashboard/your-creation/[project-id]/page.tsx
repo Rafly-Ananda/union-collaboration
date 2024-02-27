@@ -112,7 +112,7 @@ export default function CreationViewer() {
         <div className="h-full w-60 rounded-md bg-white">
           <div className="skeleton relative h-48 w-full rounded-none rounded-t-md">
             <Image
-              src={isImageError ? notFound : data?.logo_url}
+              src={isImageError ? notFound : data?.logo_url ?? notFound}
               width={300}
               height={300}
               alt="project logo"
