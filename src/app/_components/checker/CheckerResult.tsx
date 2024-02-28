@@ -1,21 +1,23 @@
-// import { api } from "@/trpc/react";
+"use client";
+import { api } from "@/trpc/react";
 import Image from "next/image";
 import checkerSuccessAva from "../../../../public/assets/link_checker_success.png";
 import checkerSuccessCopy from "../../../../public/assets/link_checker_yay.png";
 import checkerFaileAva from "../../../../public/assets/link_checker_failed.png";
 import checkerFailedCopy from "../../../../public/assets/link_checker_wait.png";
+import { usePathname } from "next/navigation";
 
-export default function CheckerResult({ link }: { link: string }) {
-  // const { data, isLoading } = api.link.getLink.useQuery({
-  //   url: link,
-  // });
+export default function CheckerResult() {
+  const pathName = usePathname();
+  const link = pathName.split("/").at(-1);
 
-  const isLoading = false;
-  const data = "asdasd";
+  const { data, isLoading } = api.user.getSingleVerifiedLink.useQuery({
+    url: link,
+  });
 
   return (
-    <section className="mt-5 flex h-fit w-[80%] flex-col items-center justify-center gap-4">
-      {!isLoading && data ? (
+    <section className="mt-5 flex h-fit w-[822px] flex-col items-center justify-center gap-4 ">
+      {!isLoading && data !== null ? (
         <div className="flex w-full flex-col items-center justify-center gap-10 rounded-lg bg-[#e2e0d6] p-10">
           <h1 className="text-3xl font-bold">{link}</h1>
           <Image src={checkerSuccessAva} alt="checker success ava" />
@@ -34,7 +36,7 @@ export default function CheckerResult({ link }: { link: string }) {
           <Image src={checkerFaileAva} alt="checker failed ava" />
           <Image src={checkerFailedCopy} alt="checker failed coppy" />
 
-          <div className="rounded-md bg-[#debfb5] p-5">
+          <div className="flex w-full flex-col items-center justify-center rounded-md bg-[#debfb5] p-5">
             <p className="text-[#CB3A31]">
               This url is not listed in our database. This could mean two
               things:

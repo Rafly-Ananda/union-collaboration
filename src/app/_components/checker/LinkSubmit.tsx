@@ -164,7 +164,7 @@ export default function LinkSubmit() {
             </div>
           ) : (
             <div className="flex w-full items-center justify-center">
-              <div className="join mt-5">
+              {/* <div className="join mt-5">
                 <button
                   className="btn join-item bg-[#F3F4F6]"
                   onClick={onPrevPage}
@@ -180,7 +180,7 @@ export default function LinkSubmit() {
                 >
                   »
                 </button>
-              </div>
+              </div> */}
             </div>
           )}
         </>

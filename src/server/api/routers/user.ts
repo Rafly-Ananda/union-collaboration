@@ -161,7 +161,7 @@ export const userRouter = createTRPCRouter({
   getSingleVerifiedLink: protectedProcedure
     .input(
       z.object({
-        url: z.string(),
+        url: z.string().optional(),
         externalUserId: z.string().optional(),
       }),
     )
@@ -170,23 +170,29 @@ export const userRouter = createTRPCRouter({
 
       try {
         const r = (await (
-          await fetch(`${SERVER_CONFIG.EXTERNAL_API_URL}/verified-links/${url}`)
+          await fetch(
+            `${SERVER_CONFIG.EXTERNAL_API_URL}/user/verified-links/${url}`,
+          )
         ).json()) as fetchResponse<ISingleVerifiedLink>;
+
+        console.log(r);
 
         if (r.message !== "OK") {
           throw new TRPCError({
-            message: "Failed fetching all verified links",
+            message: "Failed fetching single verified links",
             code: "PARSE_ERROR",
           });
         }
 
+        if (r.data.verifiedLinks === null) return null;
+
         const vRes = VerifiedLinksResponseValidator.safeParse(
-          r.data.verifiedLinks.results,
+          r.data.verifiedLinks,
         );
 
         if (!vRes.success) {
           throw new TRPCError({
-            message: "Failed z validating all verified links",
+            message: "Failed z validating single verified links",
             code: "PARSE_ERROR",
             cause: vRes.error,
           });
@@ -198,9 +204,11 @@ export const userRouter = createTRPCRouter({
           // total: r.data.verifiedLinks.total,
         };
       } catch (e) {
+        console.log("err occ");
+        console.log(e);
         if (e instanceof Error) {
           throw new TRPCError({
-            message: "Failed fetching all verified links",
+            message: "Failed fetching single verified links",
             code: "INTERNAL_SERVER_ERROR",
             cause: e.message,
           });

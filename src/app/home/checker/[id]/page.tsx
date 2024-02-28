@@ -9,7 +9,7 @@ export default async function LinkCheckResult({
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <CheckerResult link={url} />
+      <CheckerResult />
     </div>
   );
 }
