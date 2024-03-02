@@ -1,8 +1,4 @@
-import {
-  S3Client,
-  GetObjectCommand,
-  PutObjectCommand,
-} from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { env } from "@/env";
@@ -15,7 +11,9 @@ const s3Client = new S3Client({
   },
 });
 
-export const genPresignedUrl = async (key: string | undefined): Promise<string> => {
+export const genPresignedUrl = async (
+  key: string | undefined,
+): Promise<string> => {
   const command = new GetObjectCommand({
     Bucket: env.AWS_BUCKET,
     Key: key,

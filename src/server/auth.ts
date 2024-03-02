@@ -73,7 +73,7 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
-      authorization: { params: { scope: "guilds" } },
+      authorization: { params: { scope: "identify guilds" } },
     }),
     /**
      * ...add more providers here.

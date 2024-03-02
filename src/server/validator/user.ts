@@ -5,7 +5,7 @@ export const UserExternalValidator = z.object({
   discord_id: z.string(),
   username: z.string(),
   discriminator: z.string(),
-  avatar: z.string(),
+  avatar: z.string().nullable(),
   is_project: z.boolean(),
   is_dao: z.boolean(),
   created_at: z.string().nullish(),
@@ -23,26 +23,26 @@ export const UserValidator = z.object({
 export const UserDiscordValidator = z.object({
   id: z.string(),
   username: z.string(),
-  avatar: z.string(),
+  avatar: z.string().nullable(),
   discriminator: z.string(),
   public_flags: z.number(),
   premium_type: z.number(),
   flags: z.number(),
   banner: z.nullable(z.string()),
-  accent_color: z.number(),
-  global_name: z.string(),
+  accent_color: z.number().nullable(),
+  global_name: z.string().nullable(),
   avatar_decoration_data: z.nullable(z.unknown()),
-  banner_color: z.string(),
+  banner_color: z.string().nullable(),
   mfa_enabled: z.boolean(),
   locale: z.string(),
-  email: z.string(),
-  verified: z.boolean(),
+  email: z.string().optional(),
+  verified: z.boolean().optional(),
 });
 
 export const TrimmedUserDiscordValidator = z.object({
   id: z.string(),
   username: z.string(),
-  avatar: z.string(),
+  avatar: z.string().nullable(),
   discriminator: z.string(),
 });
 
