@@ -21,6 +21,6 @@ export interface IUserGuilds {
 }
 
 export interface IUserGuildRoles {
-  server: string;
+  server?: string;
   roles: string[];
 }
