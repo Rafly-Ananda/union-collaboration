@@ -53,7 +53,8 @@ export default function Playground() {
           <p className="opacity-50">Make Collaboration Easier.</p>
         </div>
 
-        <div className="mt-5 flex items-center justify-center gap-2 p-2">
+        {/* Navigations */}
+        {/* <div className="mt-5 flex items-center justify-center gap-2 p-2">
           <ul className="flex flex-none items-center justify-center gap-4">
             {projectFilter.map((e, i) => (
               <li className="font-medium" key={e + i}>
@@ -94,7 +95,7 @@ export default function Playground() {
               <option value="sort-desc">Sort Z-A</option>
             </Select>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Project Showcase */}
@@ -117,30 +118,34 @@ export default function Playground() {
           </>
         ) : (
           <>
-            <IconButton
-              isDisabled={paginationPage === 1}
-              aria-label="previous button"
-              bg="black"
-              h="full"
-              w="fit-content"
-              size="sm"
-              isRound={true}
-              padding="15px"
-              icon={<ArrowBackIcon color="white" boxSize={6} />}
-              onClick={handleFetchPreviousPage}
-            ></IconButton>
-            <IconButton
-              isDisabled={data?.totalPage === paginationPage}
-              aria-label="next button"
-              bg="black"
-              h="full"
-              w="fit-content"
-              size="sm"
-              isRound={true}
-              padding="15px"
-              icon={<ArrowForwardIcon color="white" boxSize={6} />}
-              onClick={handleFetchNextPage}
-            ></IconButton>
+            {data?.total !== 0 && (
+              <>
+                <IconButton
+                  isDisabled={paginationPage === 1}
+                  aria-label="previous button"
+                  bg="black"
+                  h="full"
+                  w="fit-content"
+                  size="sm"
+                  isRound={true}
+                  padding="15px"
+                  icon={<ArrowBackIcon color="white" boxSize={6} />}
+                  onClick={handleFetchPreviousPage}
+                ></IconButton>
+                <IconButton
+                  isDisabled={data?.totalPage === paginationPage}
+                  aria-label="next button"
+                  bg="black"
+                  h="full"
+                  w="fit-content"
+                  size="sm"
+                  isRound={true}
+                  padding="15px"
+                  icon={<ArrowForwardIcon color="white" boxSize={6} />}
+                  onClick={handleFetchNextPage}
+                ></IconButton>
+              </>
+            )}
           </>
         )}
       </div>

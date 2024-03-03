@@ -24,6 +24,11 @@ interface ISingleVerifiedLink {
   };
 }
 
+interface IGuildRolesRes {
+  server: string,
+  roles: string[]
+}
+
 interface fetchResponse<T> {
   message: string;
   data: T;
@@ -74,12 +79,18 @@ export const userRouter = createTRPCRouter({
           await fetch(
             `${SERVER_CONFIG.EXTERNAL_API_URL}/union/discord-bot/server/${guild_discord_id}/roles`,
           )
-        ).json()) as fetchResponse<IUserData>;
+        ).json()) as fetchResponse<IGuildRolesRes>;
         if (r.message !== "OK") {
           throw new TRPCError({
             message: "Failed fetching guild roles",
             code: "PARSE_ERROR",
           });
+        }
+
+        if (r.data.roles.length === 0 ) {
+          return {
+            roles: []
+          }
         }
 
         const vRes = DiscordGuildRolesResponseValidator.safeParse(r.data);
