@@ -19,6 +19,7 @@ import { useState, useEffect } from "react";
 import supplyIcon from "../../../../../../public/assets/supply_icon.png";
 import mintDateIcon from "../../../../../../public/assets/mint_date_icon.png";
 import wlSlotIcon from "../../../../../../public/assets/wl_slot_icon.png";
+import mintPriceIcon from "../../../../../../public/assets/alorand_icon.png";
 
 export default function CreationViewer() {
   const [isImageError, setIsImageError] = useState<boolean>(false);
@@ -196,7 +197,7 @@ export default function CreationViewer() {
 
               <div className="flex items-center gap-2">
                 <Image
-                  src={wlSlotIcon}
+                  src={mintPriceIcon}
                   alt="mint price logo "
                   className="w-6"
                 />

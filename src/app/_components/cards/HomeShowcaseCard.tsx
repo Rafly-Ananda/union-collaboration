@@ -29,7 +29,7 @@ export default function VerticalShowcaseCard({
   return (
     <div className="flex h-[443px] w-[240px] flex-col rounded-3xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:cursor-pointer">
       <div
-        className="skeleton relative h-96 w-full rounded-none rounded-t-3xl"
+        className="bg-gray-300 relative h-96 w-full rounded-none rounded-t-3xl"
         onClick={onCardClick}
       >
         <Image

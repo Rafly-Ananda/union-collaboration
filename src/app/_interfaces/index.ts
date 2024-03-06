@@ -1,6 +1,10 @@
 import type { InewProjectInput } from "./project";
 import type { InewDaoInput } from "./dao";
-import type { INewCollaborationRequest, ICollaborationRequest } from "./collaboration";
+import type {
+  INewCollaborationRequest,
+  ICollaborationRequest,
+  ICollaborationRequestWhitelist,
+} from "./collaboration";
 import type { InewWhitelistInput, EWhitelistType } from "./whitelist";
 import type { IUser, IUserGuilds, IUserGuildRoles } from "./user";
 import { EmintInfo } from "./project";
@@ -44,7 +48,8 @@ export type {
   EWhitelistType,
   IUserGuilds,
   IUserGuildRoles,
-  ICollaborationRequest
+  ICollaborationRequest,
+  ICollaborationRequestWhitelist,
 };
 
 export { EmintInfo };

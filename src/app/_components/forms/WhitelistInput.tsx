@@ -8,12 +8,17 @@ import {
   Radio,
 } from "@chakra-ui/react";
 import type { InewWhitelistInput, EWhitelistType } from "@/app/_interfaces";
-import type { IProject, ICollaborationRequest } from "@/app/_interfaces";
+import type {
+  IProject,
+  ICollaborationRequest,
+  ICollaborationRequestWhitelist,
+} from "@/app/_interfaces";
 
 export default function WhitelistInputForm({
   requester,
   receiver,
   collabDetail,
+  whitelistedUser,
   requestType,
   whiteListReq,
   setWhitelistReq,
@@ -22,6 +27,7 @@ export default function WhitelistInputForm({
   requester: IProject | undefined;
   receiver: IProject | undefined;
   collabDetail: ICollaborationRequest | undefined;
+  whitelistedUser: ICollaborationRequestWhitelist | undefined;
   requestType: string;
   whiteListReq: InewWhitelistInput | undefined;
   setWhitelistReq: React.Dispatch<
@@ -39,27 +45,49 @@ export default function WhitelistInputForm({
           <ul className="mt-2 text-sm text-gray-400">
             {collabDetail?.type === "Offering WL" && (
               <>
-                <li>General Whitelist (Apply to {requester?.project_name}):</li>
-                <li>Team Whitelist (Apply to {requester?.project_name}):</li>
+                <li>
+                  General Whitelist (Apply to {requester?.project_name}):{" "}
+                  {whitelistedUser?.requester.general_wl.join(" ")}
+                </li>
+                <li>
+                  Team Whitelist (Apply to {requester?.project_name}):{" "}
+                  {whitelistedUser?.requester.team_wl.join(" ")}
+                </li>
               </>
             )}
 
             {collabDetail?.type === "Requesting WL" && (
               <>
-                <li>General Whitelist (Apply to {receiver?.project_name}):</li>
-                <li>Team Whitelist (Apply to {receiver?.project_name}):</li>
+                <li>
+                  General Whitelist (Apply to {receiver?.project_name}):{" "}
+                  {whitelistedUser?.receiver.general_wl.join(" ")}
+                </li>
+                <li>
+                  Team Whitelist (Apply to {receiver?.project_name}):{" "}
+                  {whitelistedUser?.receiver.team_wl.join(" ")}
+                </li>
               </>
             )}
 
             {collabDetail?.type === "WL Exchange" && (
               <>
-                <li>General Whitelist (Apply to {receiver?.project_name}):</li>
-                <li>Team Whitelist (Apply to {receiver?.project_name}):</li>
+                <li>
+                  General Whitelist (Apply to {receiver?.project_name}):{" "}
+                  {whitelistedUser?.receiver.general_wl.join(" ")}
+                </li>
+                <li>
+                  Team Whitelist (Apply to {receiver?.project_name}):{" "}
+                  {whitelistedUser?.receiver.team_wl.join(" ")}
+                </li>
                 <li className="mt-2">
-                  General Whitelist (Apply to {requester?.project_name}):
+                  General Whitelist (Apply to {requester?.project_name}):{" "}
+                  {whitelistedUser?.requester.general_wl.join(" ")}
                 </li>
 
-                <li>Team Whitelist (Apply to {requester?.project_name}):</li>
+                <li>
+                  Team Whitelist (Apply to {requester?.project_name}):{" "}
+                  {whitelistedUser?.requester.team_wl.join(" ")}
+                </li>
               </>
             )}
           </ul>
@@ -82,8 +110,28 @@ export default function WhitelistInputForm({
                     }
                   >
                     <div className="flex items-center justify-start gap-20">
-                      <Radio value="1">General Whitelist</Radio>
-                      <Radio value="2">Team Whitelist</Radio>
+                      <Radio
+                        value="1"
+                        isDisabled={
+                          whitelistedUser?.requester.general_wl.length ===
+                          collabDetail?.wl_spot_amt
+                            ? true
+                            : false
+                        }
+                      >
+                        General Whitelist
+                      </Radio>
+                      <Radio
+                        value="2"
+                        isDisabled={
+                          whitelistedUser?.requester.team_wl.length ===
+                          collabDetail?.wl_team_amt
+                            ? true
+                            : false
+                        }
+                      >
+                        Team Whitelist
+                      </Radio>
                     </div>
                   </RadioGroup>
                 </FormControl>
@@ -106,8 +154,21 @@ export default function WhitelistInputForm({
 
                 <div className="mt-5 flex w-full items-center justify-end">
                   <button
-                    className="rounded-md bg-black px-4 py-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1"
+                    className={` ${
+                      whitelistedUser?.requester.general_wl.length ===
+                        collabDetail?.wl_team_amt &&
+                      whitelistedUser?.requester.team_wl.length ===
+                        collabDetail?.wl_spot_amt
+                        ? `rounded-md bg-gray-500 px-4 py-2 text-sm text-white`
+                        : `rounded-md bg-black px-4 py-2 text-sm text-white transition delay-150 duration-300 ease-in-out hover:-translate-y-1`
+                    }`}
                     onClick={onWhitelistSubmit}
+                    disabled={
+                      whitelistedUser?.requester.general_wl.length ===
+                        collabDetail?.wl_team_amt &&
+                      whitelistedUser?.requester.team_wl.length ===
+                        collabDetail?.wl_spot_amt
+                    }
                   >
                     Apply Role
                   </button>
@@ -130,8 +191,28 @@ export default function WhitelistInputForm({
                     }
                   >
                     <div className="flex items-center justify-start gap-20">
-                      <Radio value="1">General Whitelist</Radio>
-                      <Radio value="2">Team Whitelist</Radio>
+                    <Radio
+                        value="1"
+                        isDisabled={
+                          whitelistedUser?.receiver.general_wl.length ===
+                          collabDetail?.wl_spot_amt
+                            ? true
+                            : false
+                        }
+                      >
+                        General Whitelist
+                      </Radio>
+                      <Radio
+                        value="2"
+                        isDisabled={
+                          whitelistedUser?.receiver.team_wl.length ===
+                          collabDetail?.wl_team_amt
+                            ? true
+                            : false
+                        }
+                      >
+                        Team Whitelist
+                      </Radio>
                     </div>
                   </RadioGroup>
                 </FormControl>

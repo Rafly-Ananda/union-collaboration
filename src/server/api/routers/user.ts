@@ -25,8 +25,8 @@ interface ISingleVerifiedLink {
 }
 
 interface IGuildRolesRes {
-  server: string,
-  roles: string[]
+  server: string;
+  roles: string[];
 }
 
 interface fetchResponse<T> {
@@ -87,10 +87,10 @@ export const userRouter = createTRPCRouter({
           });
         }
 
-        if (r.data.roles.length === 0 ) {
+        if (r.data.roles.length === 0) {
           return {
-            roles: []
-          }
+            roles: [],
+          };
         }
 
         const vRes = DiscordGuildRolesResponseValidator.safeParse(r.data);
@@ -186,8 +186,6 @@ export const userRouter = createTRPCRouter({
           )
         ).json()) as fetchResponse<ISingleVerifiedLink>;
 
-        console.log(r);
-
         if (r.message !== "OK") {
           throw new TRPCError({
             message: "Failed fetching single verified links",
@@ -215,8 +213,6 @@ export const userRouter = createTRPCRouter({
           // total: r.data.verifiedLinks.total,
         };
       } catch (e) {
-        console.log("err occ");
-        console.log(e);
         if (e instanceof Error) {
           throw new TRPCError({
             message: "Failed fetching single verified links",

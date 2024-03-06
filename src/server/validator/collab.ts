@@ -23,6 +23,19 @@ export const CollabValidator = z.object({
   discord_id: z.string(),
 });
 
+export const CollabWhitelistedValidator = z.object({
+  id: z.string(),
+  collaboration_request_id: z.string(),
+  type: z.number(),
+  discord_username: z.string(),
+  status: z.number(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  discord_guild_origin_id: z.string(),
+  project_name: z.string(),
+  guild_id: z.string(),
+});
+
 export const CollabInputValidator = z.object({
   project_id: z.string(),
   requested_by: z.string(),

@@ -6,18 +6,20 @@ import Image from "next/image";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Divider } from "@chakra-ui/react";
-import { FaXTwitter, FaDiscord, FaGlobe } from "react-icons/fa6";
+import { FaXTwitter, FaDiscord, FaGlobe, FaAnglesRight } from "react-icons/fa6";
 import { FaEdit, FaRegWindowClose, FaPlay } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import notFound from "../../../../../../public/assets/not_found.png";
 import { dateFormatter } from "@/app/_utils/dateFormatter";
 import { useState, useEffect } from "react";
 import ProjectStatusBadge from "@/app/_components/badges/ProjectStatus";
+import { RxPaperPlane } from "react-icons/rx";
 
 // Icons
 import supplyIcon from "../../../../../../public/assets/supply_icon.png";
 import mintDateIcon from "../../../../../../public/assets/mint_date_icon.png";
 import wlSlotIcon from "../../../../../../public/assets/wl_slot_icon.png";
+import mintPriceIcon from "../../../../../../public/assets/alorand_icon.png";
 
 export default function ProjectViewer() {
   const [isImageError, setIsImageError] = useState<boolean>(false);
@@ -163,7 +165,7 @@ export default function ProjectViewer() {
           {data?.type === "project" && (
             <div className="mt-5 flex w-fit items-center justify-between gap-10">
               <div className="flex items-center gap-2">
-                <Image src={supplyIcon} alt="xoxo" className="w-6" />
+                <Image src={supplyIcon} alt="supply logo" className="w-6" />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
                   <span className="text-[#C2C2C2]">{data?.supply} EU</span>
                   <span>Supply</span>
@@ -171,7 +173,11 @@ export default function ProjectViewer() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Image src={mintDateIcon} alt="xoxo" className="w-6" />
+                <Image
+                  src={mintDateIcon}
+                  alt="mint date logo"
+                  className="w-6"
+                />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
                   <span className="text-[#C2C2C2]">
                     {dateFormatter(data?.mint_date, "long")}
@@ -181,13 +187,67 @@ export default function ProjectViewer() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Image src={wlSlotIcon} alt="xoxo" className="w-6" />
+                <Image
+                  src={wlSlotIcon}
+                  alt="avl wl spot logo"
+                  className="w-6"
+                />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
                   <span className="text-[#C2C2C2]">{data?.avl_wl_spots}</span>
                   <span>Available WL Spot</span>
                 </div>
               </div>
+
+              <div className="flex items-center gap-2">
+                <Image
+                  src={mintPriceIcon}
+                  alt="mint price logo "
+                  className="w-6"
+                />
+                <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
+                  <span className="text-[#C2C2C2]">{data?.mint_price}</span>
+                  <span>Mint Price</span>
+                </div>
+              </div>
             </div>
+          )}
+
+          {userSession?.user.extras.id === data?.created_by && (
+            <>
+              <div className="mt-5 flex items-center gap-5">
+                {isLoading || isFetching ? (
+                  <>
+                    <div className="skeleton h-9 w-36 rounded-md"></div>
+                    <div className="skeleton h-9 w-28 rounded-md"></div>
+                  </>
+                ) : (
+                  <>
+                    {/* Incoming Request Link */}
+                    <Link
+                      href={`/home/dashboard/your-creation/${data?.id}/incoming-request`}
+                    >
+                      <div></div>
+                      <button
+                        className={`flex w-fit items-center justify-center gap-2 rounded-md border border-[#319795] p-2 text-sm font-semibold text-[#319795] hover:bg-[#319795] hover:text-white `}
+                      >
+                        <FaAnglesRight />
+                        Incoming Request
+                      </button>
+                    </Link>
+
+                    {/* Request Sent Link */}
+                    <Link
+                      href={`/home/dashboard/your-creation/${data?.id}/request-sent`}
+                    >
+                      <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A] hover:bg-[#F2994A] hover:text-white">
+                        <RxPaperPlane />
+                        Request Sent
+                      </button>
+                    </Link>
+                  </>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

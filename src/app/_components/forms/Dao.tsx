@@ -215,16 +215,22 @@ export default function DaoForm({
           {/* Project Logo */}
           <FormControl className="mt-5" isRequired={true}>
             <FormLabel>Project Logo (Max 200kb)</FormLabel>
-            <Input
-              type="file"
-              name="project_logo"
-              onChange={(e) =>
-                localDaoSetState((prev) => ({
-                  ...prev,
-                  [e.target.name]: e.target.files?.[0],
-                }))
-              }
-            />
+            <label>
+              <span className="btn mr-2 bg-[#636972] text-white">
+                Choose File
+              </span>
+              <input
+                type="file"
+                name="project_logo"
+                className="file-input file-input-bordered w-full max-w-xs p-2.5 [&::file-selector-button]:hidden"
+                onChange={(e) =>
+                  localDaoSetState((prev) => ({
+                    ...prev,
+                    [e.target.name]: e.target.files?.[0],
+                  }))
+                }
+              />
+            </label>
           </FormControl>
         </div>
 

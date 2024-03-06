@@ -51,6 +51,11 @@ export default function RequestDetail() {
     projectId: collabRequestId!,
   });
 
+  const { data: whitelisted_user, refetch: refetch_whitelist } =
+    api.collab.getWhitelistedUser.useQuery({
+      collaboration_req_id: collabRequestId!,
+    });
+
   const { data: requester } = api.project.get.useQuery(
     {
       projectId: collab?.requested_by,
@@ -67,6 +72,7 @@ export default function RequestDetail() {
   const applyWhiteList = api.collab.collabAddRole.useMutation({
     onSuccess: async () => {
       await refetch();
+      await refetch_whitelist();
       setWhitelistReq(undefined);
     },
   });
@@ -196,7 +202,11 @@ export default function RequestDetail() {
             <IoTriangle className="text-2xl" />
             <div className="flex flex-col leading-tight">
               <span className="font-bold text-[#C2C2C2]">WL For Team</span>
-              <span className="font-bold">{collab?.wl_team_amt}</span>
+              <span className="font-bold">
+                {collab?.wl_team_amt}
+                {collab?.status === "Agreed" &&
+                  " Used " + whitelisted_user?.requester.team_wl.length}
+              </span>
             </div>
           </div>
 
@@ -214,7 +224,11 @@ export default function RequestDetail() {
             <FaStar className="text-2xl" />
             <div className="flex flex-col leading-tight">
               <span className="font-bold text-[#C2C2C2]">WL Spots</span>
-              <span className="font-bold">{collab?.wl_spot_amt}</span>
+              <span className="font-bold">
+                {collab?.wl_spot_amt}
+                {collab?.status === "Agreed" &&
+                  " Used " + whitelisted_user?.requester.general_wl.length}
+              </span>
             </div>
           </div>
 
@@ -351,6 +365,7 @@ export default function RequestDetail() {
               receiver={project}
               requester={requester}
               collabDetail={collab}
+              whitelistedUser={whitelisted_user}
               requestType="incoming"
               whiteListReq={whiteListReq}
               setWhitelistReq={setWhitelistReq}

@@ -30,3 +30,16 @@ export interface ICollaborationRequest {
   role_from: string | null;
   discord_id: string;
 }
+
+export interface ICollaborationRequestWhitelist {
+  receiver: {
+    general_wl: string[];
+    team_wl: string[];
+    total: number;
+  };
+  requester: {
+    general_wl: string[];
+    team_wl: string[];
+    total: number;
+  };
+}

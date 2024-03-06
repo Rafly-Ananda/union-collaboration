@@ -3,7 +3,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { usePathname } from "next/navigation";
 import { api } from "@/trpc/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProjectForm from "@/app/_components/forms/Project";
 import DaoForm from "@/app/_components/forms/Dao";
@@ -164,6 +164,33 @@ export default function EditProject() {
       }
     }
   };
+
+  useEffect(() => {
+    if (project) {
+      setNewProject({
+        project_name: project.project_name!,
+        description: project.description!,
+        supply: project.supply!,
+        website: project.website!,
+        discord: project.discord!,
+        twitter: project.twitter!,
+        mint_info: project.mint_info,
+        mint_price: project.mint_price,
+        mint_date: dateFormatter(project.mint_date, "short", "-", true),
+        avl_wl_spots: project.avl_wl_spots!,
+        whitelist_role: project.whitelist_role!,
+      });
+
+      setNewDao({
+        project_name: project.project_name!,
+        description: project.description!,
+        whitelist_role: project.whitelist_role!,
+        discord: project.discord!,
+        twitter: project.twitter!,
+        website: project.website!,
+      });
+    }
+  }, [project]);
 
   return (
     <section>
