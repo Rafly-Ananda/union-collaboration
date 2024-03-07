@@ -49,7 +49,7 @@ export const TrimmedUserDiscordValidator = z.object({
 export const DiscordGuildValidator = z.object({
   id: z.string(),
   name: z.string(),
-  icon: z.string(),
+  icon: z.string().nullable(),
   owner: z.boolean(),
   permissions: z.string(),
   features: z.array(z.string()),

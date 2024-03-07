@@ -28,7 +28,7 @@ export type CollabReqWhitelist = z.infer<typeof CollabWhitelistedValidator>;
 /** VALIDATORS **/
 export const projectResponseValidator = z.array(ProjectValidator);
 export const userDiscordResponseValidator = UserDiscordValidator;
-export const DiscordGuildResponseValidator = DiscordGuildValidator;
+export const DiscordGuildResponseValidator = z.array(DiscordGuildValidator);
 export const DiscordGuildRolesResponseValidator = DiscordGuildRolesValidator;
 export const UserExternalResponseValidator = UserExternalValidator;
 export const UserGuildResponseValidator = z.array(UserGuildValidator);

@@ -57,7 +57,7 @@ export const getUserGuildDetails = async (
       })
     ).json()) as UserDiscordGuild[];
 
-    const vRes = DiscordGuildResponseValidator.safeParse(r.at(0));
+    const vRes = DiscordGuildResponseValidator.safeParse(r);
     if (!vRes.success) {
       throw new Error("Failed z validating discord guilds");
     }
