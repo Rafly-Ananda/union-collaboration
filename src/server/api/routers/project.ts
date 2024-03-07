@@ -182,6 +182,36 @@ export const projectRouter = createTRPCRouter({
       }
     }),
 
+  delete: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { projectId } = input;
+
+      try {
+        await fetch(
+          `${SERVER_CONFIG.EXTERNAL_API_URL}/union/project/${projectId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        return `Project with id ${projectId} deleted`;
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new Error(`Error on creating project/dao, ${e.message}`);
+        }
+        // Typescript Sheananigans
+        throw new Error(`Unrecoverable error project/dao`);
+      }
+    }),
+
   editProjectStatus: protectedProcedure
     .input(z.object({ projectId: z.string(), status: z.string() }))
     .mutation(async ({ input }) => {

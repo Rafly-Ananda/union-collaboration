@@ -7,13 +7,19 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Divider } from "@chakra-ui/react";
 import { FaXTwitter, FaDiscord, FaGlobe, FaAnglesRight } from "react-icons/fa6";
-import { FaEdit, FaRegWindowClose, FaPlay } from "react-icons/fa";
+import {
+  FaEdit,
+  FaRegWindowClose,
+  FaPlay,
+  FaRegTrashAlt,
+} from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import notFound from "../../../../../../public/assets/not_found.png";
 import { dateFormatter } from "@/app/_utils/dateFormatter";
 import { useState, useEffect } from "react";
 import ProjectStatusBadge from "@/app/_components/badges/ProjectStatus";
 import { RxPaperPlane } from "react-icons/rx";
+import { useRouter } from "next/navigation";
 
 // Icons
 import supplyIcon from "../../../../../../public/assets/supply_icon.png";
@@ -26,6 +32,7 @@ export default function ProjectViewer() {
   const { data: userSession } = useSession();
   const pathName = usePathname();
   const projectId = pathName.split("/").at(-1);
+  const router = useRouter();
 
   const { data, refetch, isLoading, isFetching } = api.project.get.useQuery({
     projectId: projectId!,
@@ -37,10 +44,22 @@ export default function ProjectViewer() {
     },
   });
 
+  const deleteProject = api.project.delete.useMutation({
+    onSuccess: () => {
+      router.push("/home/dashboard");
+    },
+  });
+
   const onCollabsAction = async (projectId: string, status: string) => {
     updateProjectStatus.mutate({
       projectId,
       status,
+    });
+  };
+
+  const onProjectDelete = async (projectId: string) => {
+    deleteProject.mutate({
+      projectId,
     });
   };
 
@@ -77,14 +96,14 @@ export default function ProjectViewer() {
                 href={`/home/dashboard/your-creation/${projectId}/edit`}
                 className=""
               >
-                <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#F2994A] hover:text-white ">
+                <button className="flex w-fit items-center justify-center gap-2 rounded-md border border-black p-2 text-sm font-semibold text-black transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-black hover:text-white ">
                   <FaEdit />
                   Edit
                 </button>
               </Link>
               {data?.status === "open" ? (
                 <button
-                  className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#E53E3E] p-2 text-sm font-semibold text-[#E53E3E] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#E53E3E] hover:text-white"
+                  className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#F2994A] p-2 text-sm font-semibold text-[#F2994A] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#F2994A] hover:text-white"
                   onClick={() => onCollabsAction(projectId!, "closed")}
                 >
                   <FaRegWindowClose />
@@ -99,6 +118,13 @@ export default function ProjectViewer() {
                   Open Collabs
                 </button>
               )}
+              <button
+                className="flex w-fit items-center justify-center gap-2 rounded-md border border-[#E53E3E] p-2 text-sm font-semibold text-[#E53E3E] transition delay-150 duration-300 ease-in-out hover:scale-105 hover:bg-[#E53E3E] hover:text-white"
+                onClick={() => onProjectDelete(projectId!)}
+              >
+                <FaRegTrashAlt />
+                Delete Project
+              </button>
             </>
           ) : (
             <>
