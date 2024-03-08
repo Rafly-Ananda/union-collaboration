@@ -33,6 +33,7 @@ import WhitelistInputForm from "@/app/_components/forms/WhitelistInput";
 import notFound from "../../../../../../../../public/assets/not_found.png";
 import contactSupportLogo from "../../../../../../../../public/assets/contact_support_logo.png";
 import CollabStatusBadge from "@/app/_components/badges/CollabStatus";
+import { CLIENT_CONFIG } from "@/app/_config/config";
 
 export default function RequestDetail() {
   const pathName = usePathname();
@@ -160,7 +161,7 @@ export default function RequestDetail() {
 
         {/* Project Actions */}
         <div className="flex items-center gap-4">
-          <Link href="/home/playground/project/1/collab">
+          <a href={CLIENT_CONFIG.CONTACT_ADMIN_URL}>
             <button className="rounded-lg bg-[#D2D2D2] p-2 text-sm font-bold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
               <Image
                 src={contactSupportLogo}
@@ -169,7 +170,7 @@ export default function RequestDetail() {
               />
               Contact Admin
             </button>
-          </Link>
+          </a>
         </div>
       </div>
 

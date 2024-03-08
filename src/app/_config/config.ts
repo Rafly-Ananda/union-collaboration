@@ -1,3 +1,4 @@
 export const CLIENT_CONFIG = {
     PAGINATION_LIMIT: 10,
+    CONTACT_ADMIN_URL: "https://discord.com/channels/907848516381048833/918185061747134586"
 } 

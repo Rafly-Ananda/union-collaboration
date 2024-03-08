@@ -8,6 +8,7 @@ import createProjectEmblem from "../../../../public/assets/create_project_emblem
 import createDaoEmblem from "../../../../public/assets/create_dao_emblem.png";
 import { getServerAuthSession } from "@/server/auth";
 import { api } from "@/trpc/server";
+import { CLIENT_CONFIG } from "@/app/_config/config";
 
 const graphik = localFont({
   src: "../../../../public/fonts/Graphik.otf",
@@ -38,14 +39,16 @@ export default async function Dashboard() {
           </p>
         </div>
 
-        <button className="rounded-lg bg-[#D2D2D2] p-2 text-sm font-bold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
-          <Image
-            src={contactSupportLogo}
-            alt="Contact Admin"
-            className="mr-2 inline w-5"
-          />
-          Contact Admin
-        </button>
+        <a href={CLIENT_CONFIG.CONTACT_ADMIN_URL}>
+          <button className="rounded-lg bg-[#D2D2D2] p-2 text-sm font-bold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
+            <Image
+              src={contactSupportLogo}
+              alt="Contact Admin"
+              className="mr-2 inline w-5"
+            />
+            Contact Admin
+          </button>
+        </a>
       </div>
 
       {/* Create Project n DAO */}
