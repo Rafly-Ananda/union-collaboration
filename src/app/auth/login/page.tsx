@@ -33,7 +33,10 @@ export default function Login() {
         <h1 className="text-xl font-bold opacity-50">
           Make Collaboration Easier
         </h1>
-        <button className="rounded-lg bg-[#00DF8E] px-4 py-2" onClick={onLogin}>
+        <button
+          className="rounded-lg bg-[#00DF8E] px-4 py-2 transition delay-150 duration-300 ease-in-out hover:scale-110"
+          onClick={onLogin}
+        >
           Discord Login
         </button>
       </div>

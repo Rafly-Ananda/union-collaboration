@@ -16,6 +16,10 @@ const config = {
         protocol: "https",
         hostname: "elephant-union.s3.ap-southeast-1.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "elephant-union-backup-flynn.s3.ap-southeast-1.amazonaws.com",
+      },
     ],
   },
 };

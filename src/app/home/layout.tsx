@@ -9,7 +9,7 @@ export default async function HomeLayout({
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-between bg-[#F4EDE3] px-20">
       <Navbar />
-      <div className="mt-[15vh] w-full">{children}</div>
+      <div className="mt-[15vh] h-full w-full">{children}</div>
       <Footer />
     </main>
   );

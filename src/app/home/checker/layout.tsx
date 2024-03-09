@@ -14,8 +14,8 @@ export default async function LinkCheckerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="flex h-full w-full flex-col items-center justify-center gap-2 ">
+    <div className="mt-5 flex h-[70vh] flex-grow flex-col items-center justify-center">
+      <div className="flex w-full flex-col items-center justify-center gap-2 ">
         <h1 className={`${graphik.className} text-5xl font-bold`}>Checker</h1>
 
         <p className="w-[80%] text-center opacity-50">

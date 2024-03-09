@@ -29,7 +29,7 @@ export default function VerticalShowcaseCard({
   return (
     <div className="flex h-[443px] w-[240px] flex-col rounded-3xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:cursor-pointer">
       <div
-        className="bg-gray-300 relative h-96 w-full rounded-none rounded-t-3xl"
+        className="relative h-96 w-full rounded-none rounded-t-3xl bg-gray-300"
         onClick={onCardClick}
       >
         <Image
@@ -45,11 +45,11 @@ export default function VerticalShowcaseCard({
       </div>
 
       <div className="z-10 flex h-full w-full flex-col items-center justify-between gap-4 rounded-b-3xl bg-white px-2 pb-4 pt-2">
-        <div
-          className={`h-full w-full text-center ${project.type === "dao" && "flex flex-col items-center justify-center"}`}
-        >
+        <div className={`h-full w-full text-center`}>
           <h1 className="font-medium">{project.project_name}</h1>
-          <p className="w-full text-ellipsis text-xs text-gray-400">
+          <p
+            className={`w-full text-ellipsis text-justify text-xs text-gray-400 ${project.type === "dao" ? "line-clamp-5" : "line-clamp-2"}`}
+          >
             {project.description}
           </p>
         </div>

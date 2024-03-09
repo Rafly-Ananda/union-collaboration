@@ -190,7 +190,7 @@ export default function CreationViewer() {
               <div className="flex items-center gap-2">
                 <Image src={supplyIcon} alt="supply logo" className="w-6" />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
-                  <span className="text-[#C2C2C2]">{data?.supply} EU</span>
+                  <span className="text-[#C2C2C2]">{data?.supply}</span>
                   <span>Supply</span>
                 </div>
               </div>
