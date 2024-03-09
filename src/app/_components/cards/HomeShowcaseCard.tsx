@@ -33,6 +33,7 @@ export default function VerticalShowcaseCard({
         onClick={onCardClick}
       >
         <Image
+          unoptimized={true}
           src={isImageError ? notFound : project?.logo_url ?? notFound}
           width={300}
           height={300}
