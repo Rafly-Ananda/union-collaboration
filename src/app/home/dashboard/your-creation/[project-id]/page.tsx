@@ -139,6 +139,7 @@ export default function CreationViewer() {
         <div className="h-full w-60 rounded-md bg-white">
           <div className="skeleton relative h-48 w-full rounded-none rounded-t-md">
             <Image
+              unoptimized={true}
               src={isImageError ? notFound : data?.logo_url ?? notFound}
               width={300}
               height={300}
@@ -188,7 +189,12 @@ export default function CreationViewer() {
           {data?.type === "project" && (
             <div className="mt-5 flex w-fit items-center justify-between gap-10">
               <div className="flex items-center gap-2">
-                <Image src={supplyIcon} alt="supply logo" className="w-6" />
+                <Image
+                  unoptimized={true}
+                  src={supplyIcon}
+                  alt="supply logo"
+                  className="w-6"
+                />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
                   <span className="text-[#C2C2C2]">{data?.supply}</span>
                   <span>Supply</span>
@@ -197,6 +203,7 @@ export default function CreationViewer() {
 
               <div className="flex items-center gap-2">
                 <Image
+                  unoptimized={true}
                   src={mintDateIcon}
                   alt="mint date logo"
                   className="w-6"
@@ -211,6 +218,7 @@ export default function CreationViewer() {
 
               <div className="flex items-center gap-2">
                 <Image
+                  unoptimized={true}
                   src={wlSlotIcon}
                   alt="avl wl spot logo"
                   className="w-6"
@@ -223,6 +231,7 @@ export default function CreationViewer() {
 
               <div className="flex items-center gap-2">
                 <Image
+                  unoptimized={true}
                   src={mintPriceIcon}
                   alt="mint price logo "
                   className="w-6"

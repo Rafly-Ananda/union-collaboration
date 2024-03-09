@@ -25,6 +25,7 @@ export default function YourCreationCard({ project }: { project: Project }) {
     <div className="my-5 flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-white p-4 transition delay-150 duration-300 ease-in-out hover:-translate-y-2">
       <div className="skeleton relative h-32 w-40 rounded-md">
         <Image
+          unoptimized={true}
           src={isImageError ? notFound : project?.logo_url ?? notFound}
           width={300}
           height={300}

@@ -21,6 +21,7 @@ export default function Navbar() {
         <Link href={`/home/playground`}>
           <div className="flex h-fit w-fit items-center justify-center gap-2">
             <Image
+              unoptimized={true}
               src="/assets/logo.png"
               alt="Union logo"
               className="h-auto w-auto"
@@ -29,6 +30,7 @@ export default function Navbar() {
               priority
             />
             <Image
+              unoptimized={true}
               src="/assets/union_copy.png"
               alt="Union Copy"
               className="h-auto w-auto"
@@ -57,6 +59,7 @@ export default function Navbar() {
         <div className="flex items-center justify-center gap-2">
           <div className="h-[40px] w-[40px] rounded-full bg-gray-300">
             <Image
+              unoptimized={true}
               src={session?.user?.image ?? ""}
               alt="user image"
               className="h-auto w-auto rounded-full"
@@ -69,6 +72,7 @@ export default function Navbar() {
           <Menu>
             <MenuButton>
               <Image
+                unoptimized={true}
                 src="/assets/user_setting_arrow.svg"
                 alt="user setting arrow"
                 className="h-auto w-auto"

@@ -15,6 +15,7 @@ export default function Login() {
     <main className="relative flex min-h-screen w-full flex-col items-center justify-center bg-[#F4EDE3]">
       <div className="flex h-fit w-fit flex-col items-center justify-center gap-2 rounded-xl p-20 shadow-2xl">
         <Image
+          unoptimized={true}
           src="/assets/logo.png"
           alt="Union logo"
           className=""
@@ -23,6 +24,7 @@ export default function Login() {
           priority
         />
         <Image
+          unoptimized={true}
           src="/assets/union_copy.png"
           alt="Union Copy"
           className=""

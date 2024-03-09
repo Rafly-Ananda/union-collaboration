@@ -22,8 +22,16 @@ export default function CheckerResult() {
           {data && data !== null ? (
             <div className="flex w-full flex-col items-center justify-center gap-10 rounded-lg bg-[#e2e0d6] p-10">
               <h1 className="text-3xl font-bold">{link}</h1>
-              <Image src={checkerSuccessAva} alt="checker success ava" />
-              <Image src={checkerSuccessCopy} alt="checker success coppy" />
+              <Image
+                unoptimized={true}
+                src={checkerSuccessAva}
+                alt="checker success ava"
+              />
+              <Image
+                unoptimized={true}
+                src={checkerSuccessCopy}
+                alt="checker success coppy"
+              />
 
               <div className="rounded-md bg-[#c2d0c1] p-5">
                 <p className="text-[#43936C]">
@@ -36,8 +44,16 @@ export default function CheckerResult() {
           ) : (
             <div className="flex w-full flex-col items-center justify-center gap-10 rounded-lg bg-[#e2e0d6] p-10">
               <h1 className="text-3xl font-bold">{link}</h1>
-              <Image src={checkerFaileAva} alt="checker failed ava" />
-              <Image src={checkerFailedCopy} alt="checker failed coppy" />
+              <Image
+                unoptimized={true}
+                src={checkerFaileAva}
+                alt="checker failed ava"
+              />
+              <Image
+                unoptimized={true}
+                src={checkerFailedCopy}
+                alt="checker failed coppy"
+              />
 
               <div className="flex w-full flex-col items-center justify-center rounded-md bg-[#debfb5] p-5">
                 <p className="text-[#CB3A31]">

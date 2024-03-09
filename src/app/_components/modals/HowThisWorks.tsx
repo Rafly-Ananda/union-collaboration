@@ -28,6 +28,7 @@ export default function HowThisWorksModal({
           <ModalBody>
             <div className="flex w-full flex-col items-center justify-center">
               <Image
+                unoptimized={true}
                 src={howThisWorksModal}
                 alt="How This Works Modal"
                 className="w-40"

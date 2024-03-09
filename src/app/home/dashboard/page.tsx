@@ -42,6 +42,7 @@ export default async function Dashboard() {
         <a href={CLIENT_CONFIG.CONTACT_ADMIN_URL}>
           <button className="rounded-lg bg-[#D2D2D2] p-2 text-sm font-bold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
             <Image
+              unoptimized={true}
               src={contactSupportLogo}
               alt="Contact Admin"
               className="mr-2 inline w-5"
@@ -65,6 +66,7 @@ export default async function Dashboard() {
 
             <div className="rounded-xl bg-white p-5">
               <Image
+                unoptimized={true}
                 src={createProjectEmblem}
                 alt="Create Project"
                 className="w-7"
@@ -83,7 +85,12 @@ export default async function Dashboard() {
             </div>
 
             <div className="rounded-xl bg-white p-3">
-              <Image src={createDaoEmblem} alt="Create Dao" className="w-10" />
+              <Image
+                unoptimized={true}
+                src={createDaoEmblem}
+                alt="Create Dao"
+                className="w-10"
+              />
             </div>
           </div>
         </Link>

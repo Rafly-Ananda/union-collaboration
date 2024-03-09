@@ -114,6 +114,7 @@ export default function SingleProjectViewer() {
         <div className="h-full w-60 rounded-md bg-white">
           <div className="skeleton relative h-48 w-full rounded-none rounded-t-md">
             <Image
+              unoptimized={true}
               src={isImageError ? notFound : data?.logo_url ?? notFound}
               width={300}
               height={300}
@@ -163,7 +164,12 @@ export default function SingleProjectViewer() {
           {data?.type === "project" && (
             <div className="mt-5 flex w-fit items-center justify-between gap-10">
               <div className="flex items-center gap-2">
-                <Image src={supplyIcon} alt="xoxo" className="w-6" />
+                <Image
+                  src={supplyIcon}
+                  alt="xoxo"
+                  className="w-6"
+                  unoptimized={true}
+                />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
                   <span className="text-[#C2C2C2]">{data?.supply}</span>
                   <span>Supply</span>
@@ -171,7 +177,12 @@ export default function SingleProjectViewer() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Image src={mintDateIcon} alt="xoxo" className="w-6" />
+                <Image
+                  src={mintDateIcon}
+                  alt="xoxo"
+                  className="w-6"
+                  unoptimized={true}
+                />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
                   <span className="text-[#C2C2C2]">
                     {dateFormatter(data?.mint_date, "long")}
@@ -181,7 +192,12 @@ export default function SingleProjectViewer() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Image src={wlSlotIcon} alt="xoxo" className="w-6" />
+                <Image
+                  src={wlSlotIcon}
+                  alt="xoxo"
+                  className="w-6"
+                  unoptimized={true}
+                />
                 <div className="flex flex-col gap-1 text-sm font-semibold leading-3">
                   <span className="text-[#C2C2C2]">{data?.avl_wl_spots}</span>
                   <span>Available WL Spot</span>

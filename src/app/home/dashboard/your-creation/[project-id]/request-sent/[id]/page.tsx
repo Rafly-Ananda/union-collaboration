@@ -135,6 +135,7 @@ export default function RequestDetail() {
           <a href={CLIENT_CONFIG.CONTACT_ADMIN_URL}>
             <button className="rounded-lg bg-[#D2D2D2] p-2 text-sm font-bold transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110">
               <Image
+                unoptimized={true}
                 src={contactSupportLogo}
                 alt="Contact Admin"
                 className="mr-2 inline w-5"
@@ -237,6 +238,7 @@ export default function RequestDetail() {
         <div className="h-full flex-none rounded-md bg-white">
           <div className="skeleton relative h-60 w-72  rounded-none rounded-t-md">
             <Image
+              unoptimized={true}
               src={targetCollab?.logo_url ?? notFound}
               width={300}
               height={300}
