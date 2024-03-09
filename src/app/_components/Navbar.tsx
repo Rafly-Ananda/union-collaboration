@@ -21,7 +21,6 @@ export default function Navbar() {
         <Link href={`/home/playground`}>
           <div className="flex h-fit w-fit items-center justify-center gap-2">
             <Image
-              unoptimized={true}
               src="/assets/logo.png"
               alt="Union logo"
               className="h-auto w-auto"
@@ -30,7 +29,6 @@ export default function Navbar() {
               priority
             />
             <Image
-              unoptimized={true}
               src="/assets/union_copy.png"
               alt="Union Copy"
               className="h-auto w-auto"
